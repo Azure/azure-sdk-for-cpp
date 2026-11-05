@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# cspell: words aziotsharedutil
+
 cmake_minimum_required (VERSION 3.13)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -29,6 +31,7 @@ add_executable(azure-core-amqp-tests
   async_operation_queue_tests.cpp
   azure_core_amqp_tests.cpp
   claim_based_security_tests.cpp
+  cleanup_test_listener.hpp
   connection_string_tests.cpp
   connection_tests.cpp
   global_state_tests.cpp
@@ -37,6 +40,7 @@ add_executable(azure-core-amqp-tests
   message_source_target.cpp
   operation_timeout_tests.cpp
   mock_amqp_server.hpp
+  session_cleanup_tests.cpp
   session_tests.cpp
   amqp_performative_tests.cpp
   ${UAMQP_ONLY_TESTS}
@@ -44,7 +48,8 @@ add_executable(azure-core-amqp-tests
 
 
 if (USE_UAMQP)
-target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
+target_include_directories(azure-core-amqp-tests SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+target_link_libraries(azure-core-amqp-tests PRIVATE umock_c azure_macro_utils_c aziotsharedutil)
 endif()
 if (USE_RUST_AMQP)
 target_include_directories(azure-core-amqp-tests PRIVATE ../../src/impl/rust_amqp/rust_amqp/rust_wrapper)

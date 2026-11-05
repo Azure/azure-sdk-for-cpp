@@ -233,11 +233,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief Ends operations on the session.
      *
+     * @note With uAMQP, a failed protocol shutdown throws. The native session and its polling
+     * reference are then released when the last session owner is destroyed. Calling End is
+     * still required before destroying a begun session.
      */
     void End(Azure::Core::Context const& context);
 
     /** @brief Ends operations on the session.
      *
+     * @note With uAMQP, a failed protocol shutdown throws. The native session and its polling
+     * reference are then released when the last session owner is destroyed. Calling End is
+     * still required before destroying a begun session.
      */
     void End(
         std::string const& condition_value,

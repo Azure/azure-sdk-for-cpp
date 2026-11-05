@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# cspell: words umock aziotsharedutil
+
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-messaging-eventhubs-test LANGUAGES CXX)
@@ -29,6 +31,7 @@ add_executable (
     processor_load_balancer_test.cpp
     processor_test.cpp
     producer_client_test.cpp
+    properties_cleanup_test.cpp
     reattach_connection_string_test.cpp
     reattach_policy_test.cpp
     retry_operation_test.cpp
@@ -49,7 +52,13 @@ endif()
 if(USE_RUST_AMQP)
   target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_RUST_AMQP)
 else()
-  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_UAMQP)
+  find_package(umock_c CONFIG REQUIRED)
+  find_package(azure_macro_utils_c CONFIG REQUIRED)
+  find_package(azure_c_shared_utility CONFIG REQUIRED)
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_UAMQP _azure_TESTING_BUILD)
+  target_include_directories(azure-messaging-eventhubs-test SYSTEM PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../core/azure-core-amqp/src/impl/uamqp/vendor/azure-uamqp-c/inc)
+  target_link_libraries(azure-messaging-eventhubs-test PRIVATE umock_c azure_macro_utils_c aziotsharedutil)
 endif()
 
 target_link_libraries(

@@ -34,19 +34,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   SessionImpl::~SessionImpl() noexcept
   {
-    if (m_isBegun)
+    if (m_isBegun && !m_endFailed)
     {
       AZURE_ASSERT_MSG(false, "Session was not ended before destruction.");
     }
 
-    // If we have a mismatched begin/end pair, we need to stop polling on the connection so it
-    // gets cleaned up properly.
+    // A failed End leaves the native session alive while management clients and links own it.
+    // The last owner reaches here after those objects have gone. session_destroy frees the
+    // endpoint and native resources even if the protocol end frame cannot be sent.
+    {
+      auto lock{m_connectionToPoll->Lock()};
+      m_session.reset();
+    }
+    // Release our polling reference exactly once, outside the connection lock.
     if (m_connectionAsyncStarted)
     {
       m_connectionToPoll->EnableAsyncOperation(false);
     }
-    auto lock{m_connectionToPoll->Lock()};
-    m_session.reset();
   }
 
   SessionImpl::SessionImpl(
@@ -87,8 +91,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
       _internal::SessionOptions const& options,
-      _internal::SessionEvents* eventHandler)
-      : m_connectionToPoll(connection),
+      _internal::SessionEvents* eventHandler,
+      EndSession endSession)
+      : m_endSession{endSession}, m_connectionToPoll(connection),
         m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
         m_options{options}, m_eventHandler{eventHandler}
 
@@ -159,28 +164,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     m_isBegun = true;
+    m_endFailed = false;
 
     // Mark the connection as async so that we can use the async APIs.
     GetConnection()->EnableAsyncOperation(true);
     m_connectionAsyncStarted = true;
   }
-  void SessionImpl::End(Azure::Core::Context const&)
-  {
-    if (!m_isBegun)
-    {
-      throw std::runtime_error("Session End without corresponding Begin.");
-    }
-    // When we end the session, it clears all the links, so we need to ensure that the
-    //    m_newLinkAttachedQueue.Clear();
-    if (session_end(m_session.get(), nullptr, nullptr))
-    {
-      throw std::runtime_error("Could not begin session");
-    }
-    // Mark the connection as async so that we can use the async APIs.
-    GetConnection()->EnableAsyncOperation(false);
-    m_connectionAsyncStarted = false;
-    m_isBegun = false;
-  }
+  void SessionImpl::End(Azure::Core::Context const& context) { End({}, {}, context); }
 
   void SessionImpl::End(
       const std::string& condition,
@@ -191,19 +181,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Session End without corresponding Begin.");
     }
-    // When we end the session, it clears all the links, so we need to ensure that the
-    //    m_newLinkAttachedQueue.Clear();
-    if (session_end(
+    // The native end releases the link endpoints, even if sending the end frame fails.
+    if (m_endSession(
             m_session.get(),
             condition.empty() ? nullptr : condition.c_str(),
             description.empty() ? nullptr : description.c_str()))
     {
-      throw std::runtime_error("Could not begin session");
+      m_endFailed = true;
+      throw std::runtime_error("Could not end session");
     }
-    // Mark the connection as async so that we can use the async APIs.
+    // Release the polling reference acquired by Begin.
     GetConnection()->EnableAsyncOperation(false);
     m_connectionAsyncStarted = false;
     m_isBegun = false;
+    m_endFailed = false;
   }
 
   void SessionImpl::SendDetach(
