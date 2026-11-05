@@ -1,14 +1,10 @@
 # Release History
 
-## 12.18.0-beta.2 (Unreleased)
+## 12.18.0 (2026-11-06)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Features from `12.18.0-beta.1` are included in this stable partner-feed release.
 
 ## 12.18.0-beta.1 (2026-11-06)
 
