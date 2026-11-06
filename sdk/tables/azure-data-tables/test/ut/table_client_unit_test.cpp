@@ -446,7 +446,7 @@ namespace Azure { namespace Data { namespace Test {
     };
     std::vector<KeyCase> const cases{
         {"", "", "", ""},
-        {"O'Brien", "a''b", "O''Brien", "a''''b"},
+        {"o'clock", "a''b", "o''clock", "a''''b"},
         {"'", "'", "''", "''"},
         {"part \xc3\xa9%+'", "row \xe6\xb0\xb4'", "part \xc3\xa9%+''", "row \xe6\xb0\xb4''"}};
     auto client = CreateClient();

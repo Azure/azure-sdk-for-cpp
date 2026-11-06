@@ -216,6 +216,7 @@ namespace Azure { namespace Data { namespace Test {
     }
   }
 
+  // cspell:ignore AQIDBA
   TEST_F(SerializersTest, DeserializeEntityPreservesExplicitTypes)
   {
     auto const payload = R"({

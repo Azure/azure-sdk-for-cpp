@@ -10,6 +10,7 @@
 #include "private/serializers.hpp"
 #include "private/tables_constants.hpp"
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 
@@ -19,10 +20,15 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::_detail;
 
 namespace {
+// OData string literals are single-quoted, with embedded apostrophes doubled.
+// Escape the contents before URL encoding; callers add the surrounding quotes.
+// https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities#single-quote-
 std::string EscapeODataString(std::string const& value)
 {
   std::string escaped;
-  escaped.reserve(value.size());
+  escaped.reserve(
+      value.size()
+      + static_cast<std::string::size_type>(std::count(value.begin(), value.end(), '\'')));
   for (auto const c : value)
   {
     if (c == '\'')
