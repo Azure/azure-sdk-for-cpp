@@ -54,8 +54,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Prefers session authentication for eligible requests.
      *
-     * @note The client can fall back to bearer authentication while acquiring a session, when
-     * session creation is temporarily unavailable, or when the service rejects a session.
+     * @note Requests without a usable cached session will wait for an in-flight acquisition, 
+     * if one exists (for the same container within the same provider)
+     * rather than immediately falling back to bearer authentication.
+     * Bearer authentication is used when session acquisition is temporarily unavailable,
+     * or when the service rejects a session.
      */
     Enabled,
   };

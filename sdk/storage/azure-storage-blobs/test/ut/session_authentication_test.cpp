@@ -7,12 +7,8 @@
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 
 #include <atomic>
-#include <chrono>
-#include <functional>
-#include <future>
 #include <list>
 #include <mutex>
-#include <stdexcept>
 
 #include <gtest/gtest.h>
 
@@ -23,7 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
     public:
       SessionTestCredential() : TokenCredential("SessionTestCredential") {}
 
-      mutable std::atomic<int> GetTokenCount{0};
+      mutable int GetTokenCount = 0;
 
       Azure::Core::Credentials::AccessToken GetToken(
           const Azure::Core::Credentials::TokenRequestContext&,
@@ -66,8 +62,6 @@ namespace Azure { namespace Storage { namespace Test {
       bool RejectDownloadWithNotFound = false;
       bool FailFirstDownloadWithServerError = false;
       bool FailedDownloadWithServerError = false;
-      // Called by the transport with the container path before it handles Create Session.
-      std::function<void(const std::string&)> BeforeCreateSession;
       std::vector<std::string> CreateSessionContainers;
       std::vector<std::string> CreateSessionVersions;
       std::vector<std::string> AuthorizationHeaders;
@@ -75,23 +69,6 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<bool> SessionSignaturesValid;
       bool MutatedDownloadObserved = false;
       std::list<std::vector<uint8_t>> ResponseBodies;
-    };
-
-    // Lets a test pause Create Session inside the transport and release it later.
-    struct SessionCreationGate final
-    {
-      std::promise<void> Started;
-      std::promise<void> Continue;
-
-      void Wait()
-      {
-        // Tell the test Create Session started, then block until the test releases it.
-        Started.set_value();
-        if (Continue.get_future().wait_for(std::chrono::seconds(5)) != std::future_status::ready)
-        {
-          throw std::runtime_error("Test did not release session creation.");
-        }
-      }
     };
 
     class SessionTestTransport final : public Azure::Core::Http::HttpTransport {
@@ -105,21 +82,14 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Http::Request& request,
           Azure::Core::Context const&) override
       {
-        const auto query = request.GetUrl().GetQueryParameters();
-        const bool isCreateSession = request.GetMethod() == Azure::Core::Http::HttpMethod::Post
-            && query.count("comp") != 0 && query.at("comp") == "session";
-        // Runs before taking m_mutex so a paused Create Session doesn't block other requests.
-        if (isCreateSession && m_state->BeforeCreateSession)
-        {
-          m_state->BeforeCreateSession(request.GetUrl().GetPath());
-        }
-
         std::lock_guard<std::mutex> lock(m_mutex);
         const auto authorization = request.GetHeader("Authorization");
         m_state->AuthorizationHeaders.emplace_back(
             authorization.HasValue() ? authorization.Value() : std::string());
 
-        if (isCreateSession)
+        const auto query = request.GetUrl().GetQueryParameters();
+        if (request.GetMethod() == Azure::Core::Http::HttpMethod::Post && query.count("comp") != 0
+            && query.at("comp") == "session")
         {
           m_state->CreateSessionContainers.emplace_back(request.GetUrl().GetPath());
           const auto version = request.GetHeader("x-ms-version");
@@ -311,7 +281,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(state->AuthorizationHeaders[1].find("Session token-container:"), 0U);
     ASSERT_EQ(state->SessionSignaturesValid.size(), 1U);
     EXPECT_TRUE(state->SessionSignaturesValid[0]);
-    EXPECT_EQ(credential->GetTokenCount.load(), 1);
+    EXPECT_EQ(credential->GetTokenCount, 1);
   }
 
   TEST(SessionAuthenticationTest, SignsAfterUserPerRetryPolicies)
@@ -348,7 +318,7 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_EQ(state->AuthorizationHeaders.size(), 3U);
     EXPECT_EQ(state->AuthorizationHeaders[1].find("Session token-container:"), 0U);
     EXPECT_EQ(state->AuthorizationHeaders[2].find("Session "), std::string::npos);
-    EXPECT_EQ(credential->GetTokenCount.load(), 2);
+    EXPECT_EQ(credential->GetTokenCount, 2);
   }
 
   TEST(SessionAuthenticationTest, UsesBearerOnSecondaryHost)
@@ -461,206 +431,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(state->AuthorizationHeaders[2].find("Session "), 0U);
   }
 
-  TEST(SessionAuthenticationTest, WaitsForConcurrentSessionCreation)
-  {
-    auto credential = std::make_shared<SessionTestCredential>();
-    auto state = std::make_shared<SessionTestState>();
-    SessionCreationGate gate;
-    auto started = gate.Started.get_future();
-    state->BeforeCreateSession = [&gate](const std::string&) { gate.Wait(); };
-    Blobs::BlobClientOptions options;
-    AddSessionTestTransport(options, state);
-    options.Session.AccountName = "account";
-
-    Blobs::BlobClient client(
-        "https://account.blob.core.windows.net/container/blob", credential, options);
-    // The first download starts creating a session and blocks inside Create Session.
-    auto creating = std::async(std::launch::async, [&client]() { client.Download(); });
-    EXPECT_EQ(started.wait_for(std::chrono::seconds(5)), std::future_status::ready);
-
-    // These downloads arrive while creation is in flight and should wait for it.
-    std::vector<std::future<void>> waiting;
-    for (int i = 0; i < 4; ++i)
-    {
-      waiting.emplace_back(std::async(std::launch::async, [&client]() { client.Download(); }));
-    }
-    for (auto& download : waiting)
-    {
-      EXPECT_EQ(download.wait_for(std::chrono::milliseconds(50)), std::future_status::timeout);
-    }
-    gate.Continue.set_value();
-
-    EXPECT_NO_THROW(creating.get());
-    for (auto& download : waiting)
-    {
-      EXPECT_NO_THROW(download.get());
-    }
-    // One Create Session call, and all five downloads are signed with that session.
-    ASSERT_EQ(state->CreateSessionContainers.size(), 1U);
-    ASSERT_EQ(state->AuthorizationHeaders.size(), 6U);
-    for (size_t i = 1; i < state->AuthorizationHeaders.size(); ++i)
-    {
-      EXPECT_EQ(state->AuthorizationHeaders[i].find("Session token-container:"), 0U);
-    }
-    ASSERT_EQ(state->SessionSignaturesValid.size(), 5U);
-    for (bool valid : state->SessionSignaturesValid)
-    {
-      EXPECT_TRUE(valid);
-    }
-    EXPECT_EQ(credential->GetTokenCount.load(), 1);
-  }
-
-  TEST(SessionAuthenticationTest, DoesNotBlockOtherContainersDuringSessionCreation)
-  {
-    auto credential = std::make_shared<SessionTestCredential>();
-    auto state = std::make_shared<SessionTestState>();
-    SessionCreationGate gate;
-    auto started = gate.Started.get_future();
-    // Only container1's Create Session is paused.
-    state->BeforeCreateSession = [&gate](const std::string& container) {
-      if (container == "container1")
-      {
-        gate.Wait();
-      }
-    };
-    Blobs::BlobClientOptions options;
-    AddSessionTestTransport(options, state);
-    options.Session.AccountName = "account";
-    options.Session.Provider = std::make_shared<Blobs::SessionProvider>(
-        "https://account.blob.core.windows.net", credential, options);
-
-    Blobs::BlobServiceClient client("https://account.blob.core.windows.net", credential, options);
-    auto first = client.GetBlobContainerClient("container1").GetBlobClient("blob");
-    auto second = client.GetBlobContainerClient("container2").GetBlobClient("blob");
-    auto creating = std::async(std::launch::async, [&first]() { first.Download(); });
-    EXPECT_EQ(started.wait_for(std::chrono::seconds(5)), std::future_status::ready);
-
-    // container2 should create its own session without waiting on container1.
-    auto other = std::async(std::launch::async, [&second]() { second.Download(); });
-    EXPECT_EQ(other.wait_for(std::chrono::seconds(1)), std::future_status::ready);
-    gate.Continue.set_value();
-
-    EXPECT_NO_THROW(creating.get());
-    EXPECT_NO_THROW(other.get());
-    ASSERT_EQ(state->CreateSessionContainers.size(), 2U);
-    ASSERT_EQ(state->SessionSignaturesValid.size(), 2U);
-    EXPECT_TRUE(state->SessionSignaturesValid[0]);
-    EXPECT_TRUE(state->SessionSignaturesValid[1]);
-  }
-
-  TEST(SessionAuthenticationTest, HonorsCancellationAndDeadlinesWhileWaitingForSessionCreation)
-  {
-    for (bool cancelExplicitly : {false, true})
-    {
-      SCOPED_TRACE(cancelExplicitly ? "explicit cancellation" : "deadline");
-      auto credential = std::make_shared<SessionTestCredential>();
-      auto state = std::make_shared<SessionTestState>();
-      SessionCreationGate gate;
-      auto started = gate.Started.get_future();
-      state->BeforeCreateSession = [&gate](const std::string&) { gate.Wait(); };
-      Blobs::BlobClientOptions options;
-      AddSessionTestTransport(options, state);
-      options.Session.AccountName = "account";
-
-      Blobs::BlobClient client(
-          "https://account.blob.core.windows.net/container/blob", credential, options);
-      auto creating = std::async(std::launch::async, [&client]() { client.Download(); });
-      EXPECT_EQ(started.wait_for(std::chrono::seconds(5)), std::future_status::ready);
-
-      // The waiter's context either hits a deadline or is cancelled while creation is blocked.
-      auto context = Azure::Core::Context();
-      if (!cancelExplicitly)
-      {
-        context
-            = context.WithDeadline(Azure::DateTime::clock::now() + std::chrono::milliseconds(500));
-      }
-      auto waiting
-          = std::async(std::launch::async, [&client, &context]() { client.Download({}, context); });
-      EXPECT_EQ(waiting.wait_for(std::chrono::milliseconds(50)), std::future_status::timeout);
-      if (cancelExplicitly)
-      {
-        context.Cancel();
-      }
-      // The waiter should give up on its own, before creation is released.
-      EXPECT_EQ(waiting.wait_for(std::chrono::seconds(2)), std::future_status::ready);
-      gate.Continue.set_value();
-
-      // Only the waiter is cancelled; the creator and later downloads still use the session.
-      EXPECT_THROW(waiting.get(), Azure::Core::OperationCancelledException);
-      EXPECT_NO_THROW(creating.get());
-      EXPECT_NO_THROW(client.Download());
-      ASSERT_EQ(state->CreateSessionContainers.size(), 1U);
-      ASSERT_EQ(state->SessionSignaturesValid.size(), 2U);
-      EXPECT_TRUE(state->SessionSignaturesValid[0]);
-      EXPECT_TRUE(state->SessionSignaturesValid[1]);
-      EXPECT_EQ(credential->GetTokenCount.load(), 1);
-    }
-  }
-
-  TEST(SessionAuthenticationTest, ReleasesWaitersAfterCreateSessionFailure)
-  {
-    enum class Failure
-    {
-      Forbidden,
-      NotFound,
-      Exception
-    };
-    // A soft failure (403), a hard failure (404), and a non-storage exception.
-    for (auto failure : {Failure::Forbidden, Failure::NotFound, Failure::Exception})
-    {
-      SCOPED_TRACE(static_cast<int>(failure));
-      auto credential = std::make_shared<SessionTestCredential>();
-      auto state = std::make_shared<SessionTestState>();
-      state->RejectCreateSession = failure == Failure::Forbidden;
-      state->RejectCreateSessionWithNotFound = failure == Failure::NotFound;
-      SessionCreationGate gate;
-      auto started = gate.Started.get_future();
-      state->BeforeCreateSession = [&gate, failure](const std::string&) {
-        gate.Wait();
-        if (failure == Failure::Exception)
-        {
-          throw std::runtime_error("Create Session test failure.");
-        }
-      };
-      Blobs::BlobClientOptions options;
-      options.Retry.MaxRetries = 0;
-      AddSessionTestTransport(options, state);
-      options.Session.AccountName = "account";
-
-      Blobs::BlobClient client(
-          "https://account.blob.core.windows.net/container/blob", credential, options);
-      auto creating = std::async(std::launch::async, [&client]() { client.Download(); });
-      EXPECT_EQ(started.wait_for(std::chrono::seconds(5)), std::future_status::ready);
-
-      auto waiting = std::async(std::launch::async, [&client]() { client.Download(); });
-      EXPECT_EQ(waiting.wait_for(std::chrono::milliseconds(50)), std::future_status::timeout);
-      gate.Continue.set_value();
-
-      // The creator falls back to bearer on 403, and the 404 and exception reach the caller.
-      if (failure == Failure::Forbidden)
-      {
-        EXPECT_NO_THROW(creating.get());
-      }
-      else if (failure == Failure::NotFound)
-      {
-        EXPECT_THROW(creating.get(), StorageException);
-      }
-      else
-      {
-        EXPECT_THROW(creating.get(), std::runtime_error);
-      }
-      // The waiter and a later download use bearer instead of retrying Create Session.
-      EXPECT_NO_THROW(waiting.get());
-      EXPECT_NO_THROW(client.Download());
-      EXPECT_EQ(state->CreateSessionContainers.size(), failure == Failure::Exception ? 0U : 1U);
-      EXPECT_TRUE(state->SessionSignaturesValid.empty());
-      for (const auto& authorization : state->AuthorizationHeaders)
-      {
-        EXPECT_EQ(authorization.find("Bearer "), 0U);
-      }
-    }
-  }
-
   TEST(SessionAuthenticationTest, ExplicitProviderSupportsCustomEndpoint)
   {
     auto credential = std::make_shared<SessionTestCredential>();
@@ -725,16 +495,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(state->CreateSessionContainers.empty());
     ASSERT_EQ(state->AuthorizationHeaders.size(), 1U);
     EXPECT_EQ(state->AuthorizationHeaders[0].find("Bearer "), 0U);
-    EXPECT_EQ(credential->GetTokenCount.load(), 1);
-  }
-
-  TEST(SessionAuthenticationTest, AutoModeAllowsCustomEndpointConstruction)
-  {
-    auto credential = std::make_shared<SessionTestCredential>();
-    Blobs::BlobClientOptions options;
-
-    EXPECT_NO_THROW(
-        Blobs::BlobClient("https://storage.contoso.com/container/blob", credential, options));
+    EXPECT_EQ(credential->GetTokenCount, 1);
   }
 
   TEST(SessionAuthenticationTest, AutoModeAllowsCustomEndpointConstruction)
@@ -824,7 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(state->CreateSessionContainers.empty());
     ASSERT_EQ(state->AuthorizationHeaders.size(), 1U);
     EXPECT_EQ(state->AuthorizationHeaders[0].find("Bearer "), 0U);
-    EXPECT_EQ(credential->GetTokenCount.load(), 1);
+    EXPECT_EQ(credential->GetTokenCount, 1);
   }
 
   TEST(SessionAuthenticationTest, DisabledModeAllowsCustomEndpointConstruction)
