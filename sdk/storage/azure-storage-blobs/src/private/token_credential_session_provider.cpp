@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         }
       }
       // Bounded wait outside entry->Mutex so the cancellation check above runs every interval.
-      sessionCreationLock.try_lock_for(SessionCreationWaitInterval);
+      static_cast<void>(sessionCreationLock.try_lock_for(SessionCreationWaitInterval));
     }
 
     try
