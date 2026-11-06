@@ -4,7 +4,6 @@
 #include "token_credential_session_provider.hpp"
 
 #include "package_version.hpp"
-#include "session_authentication_policy.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -196,10 +195,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       return false;
     }
-    if (IsSessionRequired(request))
-    {
-      return true;
-    }
     if (request.GetMethod() != Azure::Core::Http::HttpMethod::Get)
     {
       return false;
@@ -220,16 +215,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   Azure::Nullable<SessionTokenInfo> TokenCredentialSessionProvider::GetSession(
       const Azure::Core::Http::Request& request,
-      bool sessionRequired,
       const Azure::Core::Context& context)
   {
     const auto containerUrl = GetContainerUrl(request);
     if (containerUrl.empty())
     {
-      if (sessionRequired)
-      {
-        throw std::runtime_error("Session authentication requires a container-scoped request.");
-      }
       return {};
     }
     auto entry = GetCacheEntry(containerUrl);
@@ -266,15 +256,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         {
           return entry->Current;
         }
-        if (!sessionRequired)
-        {
-          return {};
-        }
-        if (entry->LastCreationFailure)
-        {
-          std::rethrow_exception(entry->LastCreationFailure);
-        }
-        // A rejected session must be replaceable inside the refresh suppression window.
+        return {};
       }
       entry->LastRefreshStarted = now;
     }
@@ -291,7 +273,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       {
         entry->Current = session;
       }
-      entry->LastCreationFailure = nullptr;
       return session;
     }
     catch (const StorageException& e)
@@ -301,7 +282,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
       now = Azure::DateTime::clock::now();
       std::lock_guard<std::mutex> lock(entry->Mutex);
-      entry->LastCreationFailure = std::current_exception();
       if (softFailure)
       {
         const auto cooldownUntil = now + SessionFailureCooldown;
@@ -310,12 +290,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           entry->CooldownUntil = cooldownUntil;
         }
       }
-      if ((!sessionRequired || !context.IsCancelled()) && entry->Current.HasValue()
-          && now < entry->Current.Value().ExpiresOn)
+      if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
       {
         return entry->Current;
       }
-      if (sessionRequired || !softFailure)
+      if (!softFailure)
       {
         throw;
       }
@@ -325,18 +304,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       now = Azure::DateTime::clock::now();
       std::lock_guard<std::mutex> lock(entry->Mutex);
-      entry->LastCreationFailure = std::current_exception();
-      if ((!sessionRequired || !context.IsCancelled()) && entry->Current.HasValue()
-          && now < entry->Current.Value().ExpiresOn)
+      if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
       {
         return entry->Current;
       }
-      throw;
-    }
-    catch (...)
-    {
-      std::lock_guard<std::mutex> lock(entry->Mutex);
-      entry->LastCreationFailure = std::current_exception();
       throw;
     }
   }

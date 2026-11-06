@@ -7,7 +7,6 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
 
-#include <exception>
 #include <map>
 #include <mutex>
 
@@ -33,7 +32,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
     Azure::Nullable<SessionTokenInfo> GetSession(
         const Azure::Core::Http::Request& request,
-        bool sessionRequired,
         const Azure::Core::Context& context);
 
     void InvalidateSession(
@@ -50,7 +48,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       Azure::Nullable<SessionTokenInfo> Current;
       Azure::DateTime CooldownUntil;
       Azure::DateTime LastRefreshStarted;
-      std::exception_ptr LastCreationFailure;
     };
 
     Azure::Core::Url m_serviceUrl;

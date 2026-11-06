@@ -10,10 +10,8 @@
 
 ### Other Changes
 
-- Added internal enforcement infrastructure for future session-only operations, including serialized
-  session acquisition and rejection recovery without bearer fallback. No operations currently
-  require session authentication. Concurrent requests without a usable cached session now wait for
-  session acquisition, which has a 60-second deadline.
+- Concurrent requests now wait for in-flight session acquisition before rechecking the cached
+  session or falling back to bearer authentication. Session creation has a 60-second deadline.
 
 ## 12.20.0-beta.1 (2026-11-06)
 

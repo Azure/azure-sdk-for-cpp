@@ -17,12 +17,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     const Azure::Core::Context::Key SessionContextKey;
   }
 
-  bool IsSessionRequired(const Azure::Core::Http::Request&)
-  {
-    // Future session-only operations must be identified here.
-    return false;
-  }
-
   class SessionSigningPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit SessionSigningPolicy(std::string accountName) : m_accountName(std::move(accountName))
@@ -68,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
             std::move(credential),
             std::move(tokenRequestContext),
             enableTenantDiscovery),
-          m_provider(provider ? provider->m_provider : nullptr)
+          m_provider(provider->m_provider)
     {
     }
 
@@ -85,36 +79,15 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         Azure::Core::Http::Policies::NextHttpPolicy& nextPolicy,
         Azure::Core::Context const& context) const override
     {
-      const bool sessionRequired = IsSessionRequired(request);
-      if (!m_provider)
-      {
-        if (sessionRequired)
-        {
-          throw std::runtime_error(
-              "This operation requires session authentication. Set SessionOptions.Mode to "
-              "SessionMode::Enabled.");
-        }
-        return StorageBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
-            request, nextPolicy, context);
-      }
       if (!m_provider->IsRequestEligible(request))
       {
-        if (sessionRequired)
-        {
-          throw std::runtime_error(
-              "Session authentication is not available for this request endpoint.");
-        }
         return StorageBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
             request, nextPolicy, context);
       }
 
-      auto session = m_provider->GetSession(request, sessionRequired, context);
+      auto session = m_provider->GetSession(request, context);
       if (!session.HasValue())
       {
-        if (sessionRequired)
-        {
-          throw std::runtime_error("No session is available for this session-only operation.");
-        }
         return StorageBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
             request, nextPolicy, context);
       }
@@ -128,18 +101,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
       m_provider->InvalidateSession(request, session.Value());
       request.RemoveHeader(Azure::Storage::_internal::HttpHeaderAuthorization);
-      if (sessionRequired)
-      {
-        response.reset();
-        session = m_provider->GetSession(request, true, context);
-        auto retryContext = context.WithValue(SessionContextKey, SessionTokenInfo(session.Value()));
-        response = nextPolicy.Send(request, retryContext);
-        if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Unauthorized)
-        {
-          m_provider->InvalidateSession(request, session.Value());
-        }
-        return response;
-      }
       return StorageBearerTokenAuthenticationPolicy::AuthorizeAndSendRequest(
           request, nextPolicy, context);
     }
@@ -156,8 +117,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
                                      &tokenRequestContext,
                                      enableTenantDiscovery]() -> TokenAuthenticationPolicies {
       TokenAuthenticationPolicies policies;
-      policies.TokenAuthPolicy = std::make_unique<SessionAuthenticationPolicy>(
-          std::move(credential), std::move(tokenRequestContext), enableTenantDiscovery, nullptr);
+      policies.TokenAuthPolicy
+          = std::make_unique<Azure::Storage::_internal::StorageBearerTokenAuthenticationPolicy>(
+              std::move(credential), std::move(tokenRequestContext), enableTenantDiscovery);
       return policies;
     };
 
