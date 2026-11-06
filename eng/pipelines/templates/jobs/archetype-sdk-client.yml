@@ -8,6 +8,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: PublishToVcpkgPartnerFeed
+    type: boolean
+    default: false
   - name: TestPipeline
     type: boolean
     default: false
@@ -323,11 +326,12 @@ jobs:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
             ArtifactName: PackageInfo
 
-        - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-          parameters:
-            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
-            Artifacts: ${{ parameters.Artifacts }}
-            ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
+        - ${{ if not(parameters.PublishToVcpkgPartnerFeed) }}:
+          - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+            parameters:
+              ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
+              Artifacts: ${{ parameters.Artifacts }}
+              ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
 
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           - ${{ each artifact in parameters.Artifacts }}:
