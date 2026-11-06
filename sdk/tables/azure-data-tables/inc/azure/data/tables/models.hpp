@@ -453,6 +453,9 @@ namespace Azure { namespace Data { namespace Tables {
       std::string Value;
       /**
        * Property type.
+       * When deserializing, an explicit OData type annotation takes precedence; otherwise, native
+       * JSON booleans, integers, and floating-point numbers infer Edm.Boolean, Edm.Int32, and
+       * Edm.Double respectively. Unannotated strings leave the type unset.
        */
       Azure::Nullable<TableEntityDataType> Type;
     };

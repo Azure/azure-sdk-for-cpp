@@ -23,8 +23,8 @@ namespace Azure { namespace Data { namespace Test {
 
     EXPECT_EQ(
         ser,
-        "--batch\nContent-Type: multipart/mixed; "
-        "boundary=changeset\n\n\n\n--changeset--\n--batch\n");
+        "--batch\r\nContent-Type: multipart/mixed; "
+        "boundary=changeset\r\n\r\n--changeset--\r\n--batch--\r\n");
   }
 
   TEST_F(TransactionsBodyTest, TransactionBodyAddOp)
@@ -124,32 +124,32 @@ namespace Azure { namespace Data { namespace Test {
         break;
       case Models::TransactionActionType::Delete:
         EXPECT_EQ(
-            lines[4],
+            Core::Url::Decode(lines[4]),
             "DELETE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionActionType::UpdateMerge:
         EXPECT_EQ(
-            lines[4],
+            Core::Url::Decode(lines[4]),
             "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionActionType::UpdateReplace:
         EXPECT_EQ(
-            lines[4],
+            Core::Url::Decode(lines[4]),
             "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionActionType::InsertMerge:
         EXPECT_EQ(
-            lines[4],
+            Core::Url::Decode(lines[4]),
             "MERGE " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
       case Models::TransactionActionType::InsertReplace:
         EXPECT_EQ(
-            lines[4],
-            "PATCH " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
+            Core::Url::Decode(lines[4]),
+            "PUT " + url + "/" + tableName + "(PartitionKey='" + partitionKey + "',RowKey='"
                 + rowKey + "') HTTP/1.1");
         break;
     }
@@ -159,31 +159,24 @@ namespace Azure { namespace Data { namespace Test {
       std::string const& body,
       Models::TransactionActionType action)
   {
-    (void)action;
     std::stringstream ss(body);
     std::string line;
-    std::getline(ss, line, '\n');
-
-    // line1
-    EXPECT_EQ(line.substr(0, 8), "--batch_");
-    EXPECT_EQ(line.size(), 8);
-    batch = line.substr(2, line.length() - 1);
-    // line2
-    std::getline(ss, line, '\n');
-    EXPECT_EQ(line, "Content-Type: multipart/mixed; boundary=changeset_1");
-    changeset = line.substr(40, line.length() - 1);
-
-    // line3
-    std::getline(ss, line, '\n');
-    EXPECT_EQ(line, "");
-    std::vector<std::string> contentLines;
-    std::getline(ss, line, '\n');
-    while (line != "--" + batch)
+    std::vector<std::string> lines;
+    while (std::getline(ss, line, '\n'))
     {
-      contentLines.push_back(line);
-      std::getline(ss, line, '\n');
+      ASSERT_FALSE(line.empty());
+      ASSERT_EQ(line.back(), '\r');
+      line.pop_back();
+      lines.emplace_back(std::move(line));
     }
+    ASSERT_GE(lines.size(), 9U);
+    EXPECT_EQ(lines[0], "--batch_");
+    batch = lines[0].substr(2);
+    EXPECT_EQ(lines[1], "Content-Type: multipart/mixed; boundary=changeset_1");
+    changeset = "changeset_1";
+    EXPECT_EQ(lines[2], "");
+    std::vector<std::string> contentLines(lines.begin() + 3, lines.end() - 1);
     CheckContentLines(contentLines, action);
-    EXPECT_EQ(line, "--" + batch);
+    EXPECT_EQ(lines.back(), "--" + batch + "--");
   }
 }}} // namespace Azure::Data::Test

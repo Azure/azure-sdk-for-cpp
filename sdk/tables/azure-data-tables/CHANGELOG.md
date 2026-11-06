@@ -8,6 +8,12 @@
 
 ### Bugs Fixed
 
+- Fixed multipart transaction framing, the `InsertReplace` request method and body, and `UpdateMerge` ETag conditions.
+- Fixed `UpdateEntity` and `MergeEntity` to send `If-Match: *` when the entity's ETag is empty, rather than performing an upsert.
+- Preserved native JSON Boolean, Int32, and Double property types when responses omit OData type annotations.
+- Preserved query options and key selectors across pages and supported partition-only continuation tokens.
+- Escaped single quotes in OData entity keys before URL encoding for point, query, and transaction requests.
+
 ### Other Changes
 
 ## 1.0.0-beta.7 (2026-11-04)
