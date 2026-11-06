@@ -10,6 +10,10 @@
 
 ### Other Changes
 
+- Added internal enforcement infrastructure for future session-only operations, including shared
+  session acquisition and rejection recovery without bearer fallback. No operations currently
+  require session authentication.
+
 ## 12.20.0-beta.1 (2026-11-06)
 
 ### Features Added

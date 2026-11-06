@@ -8,6 +8,8 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
+  bool IsSessionRequired(const Azure::Core::Http::Request& request);
+
   struct TokenAuthenticationPolicies final
   {
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> TokenAuthPolicy;

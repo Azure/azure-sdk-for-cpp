@@ -4,6 +4,7 @@
 #include "token_credential_session_provider.hpp"
 
 #include "package_version.hpp"
+#include "session_authentication_policy.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -22,6 +23,7 @@ namespace {
 constexpr auto SessionRefreshLeadTime = std::chrono::seconds(30);
 constexpr auto SessionRefreshSuppression = std::chrono::seconds(30);
 constexpr auto SessionFailureCooldown = std::chrono::minutes(5);
+constexpr auto SessionCreationWaitInterval = std::chrono::milliseconds(100);
 
 } // namespace
 
@@ -193,6 +195,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       return false;
     }
+    if (IsSessionRequired(request))
+    {
+      return true;
+    }
     if (request.GetMethod() != Azure::Core::Http::HttpMethod::Get)
     {
       return false;
@@ -213,15 +219,26 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   Azure::Nullable<SessionTokenInfo> TokenCredentialSessionProvider::GetSession(
       const Azure::Core::Http::Request& request,
+      bool sessionRequired,
       const Azure::Core::Context& context)
   {
+    if (sessionRequired)
+    {
+      context.ThrowIfCancelled();
+    }
     const auto containerUrl = GetContainerUrl(request);
     if (containerUrl.empty())
     {
+      if (sessionRequired)
+      {
+        throw std::runtime_error("Session authentication requires a container-scoped request.");
+      }
       return {};
     }
     auto entry = GetCacheEntry(containerUrl);
     auto now = Azure::DateTime::clock::now();
+    std::shared_future<SessionTokenInfo> creation;
+    std::unique_ptr<std::promise<SessionTokenInfo>> completion;
     {
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (entry->Current.HasValue()
@@ -229,42 +246,96 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       {
         return entry->Current;
       }
-      if (entry->CooldownUntil > now)
+      if (entry->PendingCreation.valid())
       {
         if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
         {
           return entry->Current;
         }
-        return {};
-      }
-      if (entry->LastRefreshStarted + SessionRefreshSuppression > now)
-      {
-        if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+        if (!sessionRequired)
         {
-          return entry->Current;
+          return {};
         }
-        return {};
+        creation = entry->PendingCreation;
       }
-      entry->LastRefreshStarted = now;
+      else
+      {
+        if (entry->CooldownUntil > now
+            || entry->LastRefreshStarted + SessionRefreshSuppression > now)
+        {
+          if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+          {
+            return entry->Current;
+          }
+          if (!sessionRequired)
+          {
+            return {};
+          }
+          if (entry->LastCreationFailure)
+          {
+            std::rethrow_exception(entry->LastCreationFailure);
+          }
+          // A rejected session must be replaceable even inside the refresh suppression window.
+        }
+        completion = std::make_unique<std::promise<SessionTokenInfo>>();
+        creation = completion->get_future().share();
+        entry->PendingCreation = creation;
+        entry->LastRefreshStarted = now;
+      }
+    }
+
+    if (!completion)
+    {
+      do
+      {
+        context.ThrowIfCancelled();
+      } while (creation.wait_for(SessionCreationWaitInterval) != std::future_status::ready);
+      context.ThrowIfCancelled();
+      return creation.get();
     }
 
     try
     {
+      context.ThrowIfCancelled();
       auto session = CreateSession(containerUrl, context);
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (!entry->Current.HasValue() || entry->Current.Value().ExpiresOn < session.ExpiresOn)
       {
         entry->Current = session;
       }
+      completion->set_value(entry->Current.Value());
+      entry->PendingCreation = {};
+      entry->LastCreationFailure = nullptr;
       return session;
     }
-    catch (const StorageException& e)
+    catch (...)
     {
-      const auto statusCode = static_cast<int>(e.StatusCode);
-      const bool softFailure = statusCode >= 500 || statusCode == 403
-          || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
+      const auto failure = std::current_exception();
+      bool softFailure = false;
+      bool useCachedSession = false;
+      try
+      {
+        std::rethrow_exception(failure);
+      }
+      catch (const StorageException& e)
+      {
+        const auto statusCode = static_cast<int>(e.StatusCode);
+        softFailure = statusCode >= 500 || statusCode == 403
+            || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
+        useCachedSession = true;
+      }
+      catch (const std::exception&)
+      {
+        useCachedSession = true;
+      }
+      catch (...)
+      {
+      }
       now = Azure::DateTime::clock::now();
       std::lock_guard<std::mutex> lock(entry->Mutex);
+      completion->set_exception(failure);
+      entry->PendingCreation = {};
+      entry->LastCreationFailure = failure;
       if (softFailure)
       {
         const auto cooldownUntil = now + SessionFailureCooldown;
@@ -273,25 +344,16 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           entry->CooldownUntil = cooldownUntil;
         }
       }
-      if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+      if (useCachedSession && (!sessionRequired || !context.IsCancelled())
+          && entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
       {
         return entry->Current;
       }
-      if (!softFailure)
+      if (sessionRequired || !softFailure)
       {
         throw;
       }
       return {};
-    }
-    catch (const std::exception&)
-    {
-      now = Azure::DateTime::clock::now();
-      std::lock_guard<std::mutex> lock(entry->Mutex);
-      if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
-      {
-        return entry->Current;
-      }
-      throw;
     }
   }
 
