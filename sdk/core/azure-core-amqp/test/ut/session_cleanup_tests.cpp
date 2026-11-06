@@ -65,6 +65,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       return session_end(session, condition, description);
     }
+
+    void RetryFailedEnd()
+    {
+      {
+        CleanupTestListener server;
+        _internal::ConnectionOptions options;
+        options.Port = server.GetPort();
+        _internal::Connection connection("localhost", nullptr, options);
+        auto session
+            = _detail::SessionFactory::CreateFromInternal(std::make_shared<_detail::SessionImpl>(
+                _detail::ConnectionFactory::GetImpl(connection),
+                _internal::SessionOptions{},
+                nullptr,
+                FailOnceEnd));
+        session.Begin({});
+        EXPECT_THROW(session.End({}), std::runtime_error);
+        EXPECT_NO_THROW(session.End("amqp:internal-error", "retry", {}));
+        EXPECT_THROW(session.End({}), std::runtime_error);
+      }
+      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
   } // namespace
 
   class SessionCleanupDeathTest : public ::testing::Test {
@@ -102,23 +123,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
     EXPECT_EXIT(
         {
-          {
-            CleanupTestListener server;
-            _internal::ConnectionOptions options;
-            options.Port = server.GetPort();
-            _internal::Connection connection("localhost", nullptr, options);
-            auto session = _detail::SessionFactory::CreateFromInternal(
-                std::make_shared<_detail::SessionImpl>(
-                    _detail::ConnectionFactory::GetImpl(connection),
-                    _internal::SessionOptions{},
-                    nullptr,
-                    FailOnceEnd));
-            session.Begin({});
-            EXPECT_THROW(session.End({}), std::runtime_error);
-            EXPECT_NO_THROW(session.End("amqp:internal-error", "retry", {}));
-            EXPECT_THROW(session.End({}), std::runtime_error);
-          }
-          Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+          RetryFailedEnd();
           std::exit(::testing::Test::HasFailure() ? 1 : 0);
         },
         ::testing::ExitedWithCode(0),

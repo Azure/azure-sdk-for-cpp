@@ -158,9 +158,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
               });
         }
         Amqp::Tests::MessageTests::AmqpServerMock server(AvailablePort());
-        server.AddServiceEndpoint(
-            std::make_shared<PropertiesEndpoint>(
-                false, pauseBeforeSend ? nullptr : &requestReceived));
+        server.AddServiceEndpoint(std::make_shared<PropertiesEndpoint>(
+            false, pauseBeforeSend ? nullptr : &requestReceived));
         server.StartListening();
         {
           Amqp::_internal::ConnectionOptions options;
@@ -364,6 +363,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           EXPECT_EQ(endCalls.load(), 1);
         }
         server.StopListening();
+        server.StopListening();
+        Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
       }
       Azure::Core::Diagnostics::Logger::SetListener(nullptr);
       EXPECT_EQ(closeFailureLogged.load(), cancelledClose);
