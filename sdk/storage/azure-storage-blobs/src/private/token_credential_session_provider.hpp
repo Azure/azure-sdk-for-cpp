@@ -7,7 +7,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
 
-#include <future>
+#include <exception>
 #include <map>
 #include <mutex>
 
@@ -46,10 +46,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     struct CacheEntry
     {
       std::mutex Mutex;
+      std::timed_mutex SessionCreationMutex;
       Azure::Nullable<SessionTokenInfo> Current;
       Azure::DateTime CooldownUntil;
       Azure::DateTime LastRefreshStarted;
-      std::shared_future<SessionTokenInfo> PendingCreation;
       std::exception_ptr LastCreationFailure;
     };
 

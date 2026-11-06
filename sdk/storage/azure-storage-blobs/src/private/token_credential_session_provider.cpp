@@ -24,6 +24,7 @@ constexpr auto SessionRefreshLeadTime = std::chrono::seconds(30);
 constexpr auto SessionRefreshSuppression = std::chrono::seconds(30);
 constexpr auto SessionFailureCooldown = std::chrono::minutes(5);
 constexpr auto SessionCreationWaitInterval = std::chrono::milliseconds(100);
+constexpr auto SessionCreationTimeout = std::chrono::seconds(60);
 
 } // namespace
 
@@ -222,10 +223,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool sessionRequired,
       const Azure::Core::Context& context)
   {
-    if (sessionRequired)
-    {
-      context.ThrowIfCancelled();
-    }
     const auto containerUrl = GetContainerUrl(request);
     if (containerUrl.empty())
     {
@@ -237,8 +234,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     auto entry = GetCacheEntry(containerUrl);
     auto now = Azure::DateTime::clock::now();
-    std::shared_future<SessionTokenInfo> creation;
-    std::unique_ptr<std::promise<SessionTokenInfo>> completion;
+    context.ThrowIfCancelled();
     {
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (entry->Current.HasValue()
@@ -246,7 +242,25 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       {
         return entry->Current;
       }
-      if (entry->PendingCreation.valid())
+    }
+
+    // Only the acquisition mutex is held across Create Session, never the cache-state mutex.
+    std::unique_lock<std::timed_mutex> creationLock(entry->SessionCreationMutex, std::defer_lock);
+    do
+    {
+      context.ThrowIfCancelled();
+    } while (!creationLock.try_lock_for(SessionCreationWaitInterval));
+    context.ThrowIfCancelled();
+
+    {
+      std::lock_guard<std::mutex> lock(entry->Mutex);
+      now = Azure::DateTime::clock::now();
+      if (entry->Current.HasValue()
+          && now < entry->Current.Value().ExpiresOn - SessionRefreshLeadTime)
+      {
+        return entry->Current;
+      }
+      if (entry->CooldownUntil > now || entry->LastRefreshStarted + SessionRefreshSuppression > now)
       {
         if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
         {
@@ -256,86 +270,38 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         {
           return {};
         }
-        creation = entry->PendingCreation;
-      }
-      else
-      {
-        if (entry->CooldownUntil > now
-            || entry->LastRefreshStarted + SessionRefreshSuppression > now)
+        if (entry->LastCreationFailure)
         {
-          if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
-          {
-            return entry->Current;
-          }
-          if (!sessionRequired)
-          {
-            return {};
-          }
-          if (entry->LastCreationFailure)
-          {
-            std::rethrow_exception(entry->LastCreationFailure);
-          }
-          // A rejected session must be replaceable even inside the refresh suppression window.
+          std::rethrow_exception(entry->LastCreationFailure);
         }
-        completion = std::make_unique<std::promise<SessionTokenInfo>>();
-        creation = completion->get_future().share();
-        entry->PendingCreation = creation;
-        entry->LastRefreshStarted = now;
+        // A rejected session must be replaceable inside the refresh suppression window.
       }
-    }
-
-    if (!completion)
-    {
-      do
-      {
-        context.ThrowIfCancelled();
-      } while (creation.wait_for(SessionCreationWaitInterval) != std::future_status::ready);
-      context.ThrowIfCancelled();
-      return creation.get();
+      entry->LastRefreshStarted = now;
     }
 
     try
     {
-      context.ThrowIfCancelled();
-      auto session = CreateSession(containerUrl, context);
+      auto creationContext
+          = context.WithDeadline(Azure::DateTime::clock::now() + SessionCreationTimeout);
+      creationContext.ThrowIfCancelled();
+      auto session = CreateSession(containerUrl, creationContext);
+      creationContext.ThrowIfCancelled();
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (!entry->Current.HasValue() || entry->Current.Value().ExpiresOn < session.ExpiresOn)
       {
         entry->Current = session;
       }
-      completion->set_value(entry->Current.Value());
-      entry->PendingCreation = {};
       entry->LastCreationFailure = nullptr;
       return session;
     }
-    catch (...)
+    catch (const StorageException& e)
     {
-      const auto failure = std::current_exception();
-      bool softFailure = false;
-      bool useCachedSession = false;
-      try
-      {
-        std::rethrow_exception(failure);
-      }
-      catch (const StorageException& e)
-      {
-        const auto statusCode = static_cast<int>(e.StatusCode);
-        softFailure = statusCode >= 500 || statusCode == 403
-            || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
-        useCachedSession = true;
-      }
-      catch (const std::exception&)
-      {
-        useCachedSession = true;
-      }
-      catch (...)
-      {
-      }
+      const auto statusCode = static_cast<int>(e.StatusCode);
+      const bool softFailure = statusCode >= 500 || statusCode == 403
+          || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
       now = Azure::DateTime::clock::now();
       std::lock_guard<std::mutex> lock(entry->Mutex);
-      completion->set_exception(failure);
-      entry->PendingCreation = {};
-      entry->LastCreationFailure = failure;
+      entry->LastCreationFailure = std::current_exception();
       if (softFailure)
       {
         const auto cooldownUntil = now + SessionFailureCooldown;
@@ -344,8 +310,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           entry->CooldownUntil = cooldownUntil;
         }
       }
-      if (useCachedSession && (!sessionRequired || !context.IsCancelled())
-          && entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+      if ((!sessionRequired || !context.IsCancelled()) && entry->Current.HasValue()
+          && now < entry->Current.Value().ExpiresOn)
       {
         return entry->Current;
       }
@@ -354,6 +320,24 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         throw;
       }
       return {};
+    }
+    catch (const std::exception&)
+    {
+      now = Azure::DateTime::clock::now();
+      std::lock_guard<std::mutex> lock(entry->Mutex);
+      entry->LastCreationFailure = std::current_exception();
+      if ((!sessionRequired || !context.IsCancelled()) && entry->Current.HasValue()
+          && now < entry->Current.Value().ExpiresOn)
+      {
+        return entry->Current;
+      }
+      throw;
+    }
+    catch (...)
+    {
+      std::lock_guard<std::mutex> lock(entry->Mutex);
+      entry->LastCreationFailure = std::current_exception();
+      throw;
     }
   }
 
