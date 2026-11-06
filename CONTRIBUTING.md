@@ -132,6 +132,18 @@ cmake ..
 cmake --build .
 ```
 
+First-party C++ targets require at least C++14 using target compile features. SDK
+libraries publish that requirement to consumers, including through installed CMake
+targets. The SDK does not set a directory-wide `CMAKE_CXX_STANDARD`: compiler
+defaults newer than C++14 are allowed, and caller-selected higher standards are
+preserved when supported. Callers control whether an unsupported higher standard
+may fall back through `CMAKE_CXX_STANDARD_REQUIRED`; set it to `ON` to require the
+requested standard.
+
+To check compatibility with the minimum supported standard, configure with
+`cmake -DCMAKE_CXX_STANDARD=14 ..`, as the CI builds do. To build with a higher
+standard, use, for example, `cmake -DCMAKE_CXX_STANDARD=20 ..`.
+
 #### Static Analysis
 
 When the project is built using MSVC on Windows, the compiler can run [static analysis](https://learn.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.

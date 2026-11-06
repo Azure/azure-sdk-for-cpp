@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-perf-unit-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(DEFINED ENV{VCPKG-AZURE-CORE-CPP})
    find_package(azure-core-cpp $ENV{VCPKG-AZURE-CORE-CPP} EXACT)

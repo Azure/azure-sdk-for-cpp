@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (sample7-key-rotation LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   sample7-key-rotation
