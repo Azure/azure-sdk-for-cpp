@@ -1,18 +1,12 @@
 # Release History
 
-## 1.0.0-beta.14 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.14 (2026-11-06)
 
 ### Bugs Fixed
 
 - Fixed uAMQP session destruction after a failed `End`. Native resources and the connection polling reference are released when the last session owner is destroyed; callers must still end sessions before destruction.
 
 - Fixed uAMQP message annotation encoding so messages with annotations, including Event Hubs partition keys, include the required AMQP section descriptor. [[#7426]](https://github.com/Azure/azure-sdk-for-cpp/issues/7426)
-
-### Other Changes
 
 ## 1.0.0-beta.13 (2026-09-03)
 
