@@ -323,7 +323,7 @@ jobs:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
             ArtifactName: PackageInfo
 
-        - template: /eng/pipelines/templates/steps/partner-feed-api-review.yml
+        - template: /eng/pipelines/templates/steps/skip-steps-for-partner-feed.yml
           parameters:
             Steps:
               - template: /eng/common/pipelines/templates/steps/create-apireview.yml
