@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.0-beta.16 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.16 (2026-11-06)
 
 ### Bugs Fixed
 
@@ -14,6 +10,8 @@
 - Synchronized uAMQP properties queries with cleanup during producer recovery. Cleanup cancels an active query before releasing its management client and session, without cancelling the caller's context. Rust cancellation and concurrent cleanup are deferred to [azure-sdk-for-rust#5527](https://github.com/Azure/azure-sdk-for-rust/issues/5527).
 
 ### Other Changes
+
+- Updated the minimum `azure-core-amqp-cpp` dependency to `1.0.0-beta.14`.
 
 ## 1.0.0-beta.15 (2026-09-02)
 

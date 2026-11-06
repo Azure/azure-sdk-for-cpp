@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0-beta.5 (2026-11-06)
 
 ### Other Changes
+
+- Updated the minimum dependencies to `azure-core-amqp-cpp` `1.0.0-beta.14` and `azure-messaging-eventhubs-cpp` `1.0.0-beta.16`. This release updates dependencies only.
 
 ## 1.0.0-beta.4 (2026-08-18)
 
