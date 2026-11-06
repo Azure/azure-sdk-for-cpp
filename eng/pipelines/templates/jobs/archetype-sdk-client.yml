@@ -323,11 +323,14 @@ jobs:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
             ArtifactName: PackageInfo
 
-        - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+        - template: /eng/pipelines/templates/steps/partner-feed-api-review.yml
           parameters:
-            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
-            Artifacts: ${{ parameters.Artifacts }}
-            ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
+            Steps:
+              - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+                parameters:
+                  ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
+                  Artifacts: ${{ parameters.Artifacts }}
+                  ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
 
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           - ${{ each artifact in parameters.Artifacts }}:
