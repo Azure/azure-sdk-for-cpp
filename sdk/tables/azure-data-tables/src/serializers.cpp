@@ -555,6 +555,18 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
             value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type));
         erasable.push_back(typeFieldName);
       }
+      else if (json.at(name).is_boolean())
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmBoolean);
+      }
+      else if (json.at(name).is_number_integer())
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmInt32);
+      }
+      else if (json.at(name).is_number_float())
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmDouble);
+      }
       else
       {
         tableEntity.Properties[name] = TableEntityProperty(value);

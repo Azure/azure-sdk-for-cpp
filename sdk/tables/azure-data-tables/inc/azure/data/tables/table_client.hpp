@@ -107,6 +107,9 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Update entity in a table.
      *
+     * @note An empty ETag updates the existing entity unconditionally. Use UpdateOrInsertEntity
+     * to insert the entity if it does not exist.
+     *
      * @param tableEntity The TableEntity to set.
      * @param context for canceling long running operations.
      * @return Update entity result.
@@ -117,6 +120,9 @@ namespace Azure { namespace Data { namespace Tables {
 
     /**
      * @brief Merge entity in a table.
+     *
+     * @note An empty ETag merges the existing entity unconditionally. Use MergeOrInsertEntity
+     * to insert the entity if it does not exist.
      *
      * @param tableEntity The TableEntity to merge.
      * @param context for canceling long running operations.
@@ -221,6 +227,10 @@ namespace Azure { namespace Data { namespace Tables {
     std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepMergeEntity(
+        std::string const& changesetId,
+        Models::TableEntity entity,
+        bool isUpsert) const;
     std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::string PrepInsertEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;

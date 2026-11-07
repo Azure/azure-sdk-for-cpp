@@ -3,11 +3,12 @@
 // Licensed under the MIT License.
 
 #include "azure/data/tables/table_client.hpp"
-#include "test/ut/test_base.hpp"
+
+#include <gtest/gtest.h>
 
 namespace Azure { namespace Data { namespace Test {
 
-  class TransactionsBodyTest : public Azure::Storage::Test::StorageTest {
+  class TransactionsBodyTest : public ::testing::Test {
 
   protected:
     const std::string url = "someUrl";

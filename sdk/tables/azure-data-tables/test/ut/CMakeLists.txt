@@ -21,6 +21,7 @@ add_executable (
     serializers_test.cpp
     table_client_test.cpp
     table_client_test.hpp
+    table_client_unit_test.cpp
     transactions_test.hpp
     transactions_test.cpp
     # Include shared test source code
