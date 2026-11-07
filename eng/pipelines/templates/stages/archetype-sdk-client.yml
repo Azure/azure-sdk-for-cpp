@@ -9,6 +9,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: PublishToVcpkgPartnerFeed
+    type: boolean
+    default: false
   - name: CtestRegex
     type: string
     default: .*
@@ -148,6 +151,7 @@ extends:
               MatrixFile: eng/pipelines/templates/stages/platform-matrix-quick.json
               JobName: QuickValidate
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              PublishToVcpkgPartnerFeed: ${{ parameters.PublishToVcpkgPartnerFeed }}
               Artifacts: ${{ parameters.Artifacts }}
               CtestRegex: ${{ parameters.CtestRegex }}
               CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
@@ -174,6 +178,7 @@ extends:
               MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
               JobName: Validate
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              PublishToVcpkgPartnerFeed: ${{ parameters.PublishToVcpkgPartnerFeed }}
               Artifacts: ${{ parameters.Artifacts }}
               CtestRegex: ${{ parameters.CtestRegex }}
               CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
@@ -225,4 +230,3 @@ extends:
               ArtifactName: packages
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
-
