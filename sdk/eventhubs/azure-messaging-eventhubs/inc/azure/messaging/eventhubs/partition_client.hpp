@@ -106,8 +106,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_clientIdentifier;
     std::string m_partitionId;
 
-    /// Increases after each successful receiver reattach.
+    /// Identifies the installed receiver, changing only after a successful reattach.
     std::uint64_t m_receiverGeneration{1};
+
+    /// Allocates a distinct generation for every replacement, including failed attachments.
+    std::uint64_t m_nextReceiverGeneration{1};
 
     /// The offset of the last event received. A rebuild starts just after it.
     Azure::Nullable<std::string> m_lastReceivedOffset;

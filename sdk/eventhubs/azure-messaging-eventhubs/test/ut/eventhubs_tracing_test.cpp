@@ -486,6 +486,97 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ((std::vector<std::string>{"closing", "close", "close_failed"}), events);
   }
 
+  TEST(EventHubsTracingTest, ReceiverRecoveryAttributesCloseFailureToActiveReceiver)
+  {
+    _detail::AmqpDiagnosticsContext active{"consumer:test", "2", "link", "receiver", 7};
+    std::uint64_t nextGeneration = active.ComponentGeneration;
+    std::vector<std::pair<std::string, std::uint64_t>> events;
+    auto log = [&](Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const& diagnostics,
+                   std::string const& eventName,
+                   std::string const&) {
+      events.emplace_back(eventName, diagnostics.ComponentGeneration);
+    };
+    auto const generation = _detail::RebuildAmqpReceiver(
+        active,
+        nextGeneration,
+        []() { throw std::runtime_error("old receiver close failed"); },
+        [&](auto const& diagnostics) {
+          events.emplace_back("attach", diagnostics.ComponentGeneration);
+        },
+        log);
+
+    EXPECT_EQ(8u, generation);
+    EXPECT_EQ(
+        (std::vector<std::pair<std::string, std::uint64_t>>{
+            {"close_failed", 7}, {"reattaching", 8}, {"attach", 8}, {"reattached", 8}}),
+        events);
+  }
+
+  TEST(EventHubsTracingTest, ReceiverRecoveryDoesNotReuseFailedAttachmentGeneration)
+  {
+    _detail::AmqpDiagnosticsContext active{"consumer:test", "2", "link", "receiver", 1};
+    std::uint64_t nextGeneration = active.ComponentGeneration;
+    std::vector<std::uint64_t> attemptedGenerations;
+    std::vector<std::uint64_t> failedGenerations;
+    auto log = [&](Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const& diagnostics,
+                   std::string const& eventName,
+                   std::string const&) {
+      if (eventName == "reattach_failed")
+      {
+        failedGenerations.push_back(diagnostics.ComponentGeneration);
+      }
+    };
+    auto attach = [&](auto const& diagnostics) {
+      attemptedGenerations.push_back(diagnostics.ComponentGeneration);
+      if (attemptedGenerations.size() < 3)
+      {
+        throw std::runtime_error("replacement attach failed");
+      }
+    };
+    for (int attempt = 0; attempt < 2; ++attempt)
+    {
+      EXPECT_THROW(
+          active.ComponentGeneration = _detail::RebuildAmqpReceiver(
+              active, nextGeneration, []() {}, attach, log),
+          std::runtime_error);
+      EXPECT_EQ(1u, active.ComponentGeneration);
+    }
+    active.ComponentGeneration
+        = _detail::RebuildAmqpReceiver(active, nextGeneration, []() {}, attach, log);
+
+    EXPECT_EQ((std::vector<std::uint64_t>{2, 3, 4}), attemptedGenerations);
+    EXPECT_EQ((std::vector<std::uint64_t>{2, 3}), failedGenerations);
+    EXPECT_EQ(4u, active.ComponentGeneration);
+  }
+
+  TEST(EventHubsTracingTest, ReceiverRecoveryStopsWhenCloseIsCancelled)
+  {
+    _detail::AmqpDiagnosticsContext active{"consumer:test", "2", "link", "receiver", 7};
+    std::uint64_t nextGeneration = active.ComponentGeneration;
+    bool attached = false;
+    std::vector<std::string> events;
+    auto log = [&](Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const&,
+                   std::string const& eventName,
+                   std::string const&) { events.push_back(eventName); };
+    auto close = []() {
+      Azure::Core::Context cancelled;
+      cancelled.Cancel();
+      cancelled.ThrowIfCancelled();
+    };
+    EXPECT_THROW(
+        active.ComponentGeneration = _detail::RebuildAmqpReceiver(
+            active, nextGeneration, close, [&](auto const&) { attached = true; }, log),
+        Azure::Core::OperationCancelledException);
+
+    EXPECT_EQ(7u, active.ComponentGeneration);
+    EXPECT_EQ(7u, nextGeneration);
+    EXPECT_FALSE(attached);
+    EXPECT_TRUE(events.empty());
+  }
+
   TEST(EventHubsTracingTest, ClientIdentifiersAreUniqueWithTheSameConfiguredName)
   {
     auto const first = _detail::CreateClientIdentifier("producer", "orders");

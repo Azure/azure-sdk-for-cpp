@@ -4,6 +4,7 @@
 // Helpers for identifying Event Hubs AMQP components in logs and tracing spans.
 #pragma once
 
+#include <azure/core/context.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 
 #include <cstdint>
@@ -46,6 +47,57 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       AmqpDiagnosticsContext const& diagnosticsContext,
       std::string const& eventName,
       std::string const& detail = {});
+
+  // Keep recovery lifecycle reporting together so transport failures can be tested without a
+  // service connection. The attach callback creates, opens, and installs the replacement receiver.
+  template <typename CloseFunction, typename AttachFunction, typename LogFunction>
+  std::uint64_t RebuildAmqpReceiver(
+      AmqpDiagnosticsContext diagnosticsContext,
+      std::uint64_t& nextReceiverGeneration,
+      CloseFunction close,
+      AttachFunction attach,
+      LogFunction log)
+  {
+    // Close belongs to the installed receiver, even after a previous replacement failed.
+    try
+    {
+      close();
+    }
+    catch (Azure::Core::OperationCancelledException const&)
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      log(Azure::Core::Diagnostics::Logger::Level::Warning,
+          diagnosticsContext,
+          "close_failed",
+          ex.what());
+    }
+    // Consume an ID for every replacement attempt, including unsuccessful attachments.
+    diagnosticsContext.ComponentGeneration = ++nextReceiverGeneration;
+    log(Azure::Core::Diagnostics::Logger::Level::Informational,
+        diagnosticsContext,
+        "reattaching",
+        {});
+    try
+    {
+      attach(diagnosticsContext);
+      log(Azure::Core::Diagnostics::Logger::Level::Informational,
+          diagnosticsContext,
+          "reattached",
+          {});
+      return diagnosticsContext.ComponentGeneration;
+    }
+    catch (std::exception const& ex)
+    {
+      log(Azure::Core::Diagnostics::Logger::Level::Warning,
+          diagnosticsContext,
+          "reattach_failed",
+          ex.what());
+      throw;
+    }
+  }
 
   template <typename CloseFunction, typename LogFunction>
   void CloseAmqpComponent(

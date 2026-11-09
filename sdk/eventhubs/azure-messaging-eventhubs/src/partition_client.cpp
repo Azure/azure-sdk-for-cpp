@@ -302,8 +302,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_receiverName{std::move(receiverName)}, m_clientIdentifier{std::move(clientIdentifier)},
         m_partitionId{std::move(partitionId)}, m_partitionOptions{options},
         m_retryOptions{retryOptions}, m_tracingFactory{std::move(tracingFactory)},
-        m_eventHubName{std::move(eventHubName)}, m_fullyQualifiedNamespace{
-                                                     std::move(fullyQualifiedNamespace)}
+        m_eventHubName{std::move(eventHubName)},
+        m_fullyQualifiedNamespace{std::move(fullyQualifiedNamespace)}
   {
   }
 
@@ -327,56 +327,41 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void PartitionClient::RebuildReceiver(std::uint64_t retryAttempt, Core::Context const& context)
   {
-    auto const rebuiltGeneration = m_receiverGeneration + 1;
-    auto diagnosticsContext = CreateDiagnosticsContext(
-        m_clientIdentifier, m_partitionId, m_receiverName, rebuiltGeneration);
-    _detail::LogAmqpLifecycle(Logger::Level::Informational, diagnosticsContext, "reattaching");
+    m_receiverGeneration = _detail::RebuildAmqpReceiver(
+        CreateDiagnosticsContext(
+            m_clientIdentifier, m_partitionId, m_receiverName, m_receiverGeneration),
+        m_nextReceiverGeneration,
+        [&]() { m_receiver.Close(context); },
+        [&](auto const& diagnosticsContext) {
+          PartitionClientOptions options{m_partitionOptions};
+          options.StartPosition = _detail::ResumeStartPosition(
+              m_partitionOptions.StartPosition, m_lastReceivedOffset);
 
-    try
-    {
-      m_receiver.Close(context);
-    }
-    catch (Azure::Core::OperationCancelledException const&)
-    {
-      throw;
-    }
-    catch (std::exception const& ex)
-    {
-      _detail::LogAmqpLifecycle(
-          Logger::Level::Warning, diagnosticsContext, "close_failed", ex.what());
-    }
-
-    PartitionClientOptions options{m_partitionOptions};
-    options.StartPosition
-        = _detail::ResumeStartPosition(m_partitionOptions.StartPosition, m_lastReceivedOffset);
-
-    auto amqpTracingContext = _detail::StartAmqpSpan(
-        m_tracingFactory,
-        "PartitionClient.AmqpLink.Open",
-        "receive",
-        m_eventHubName,
-        m_fullyQualifiedNamespace,
-        Azure::Nullable<size_t>{},
-        diagnosticsContext,
-        retryAttempt,
-        context,
-        _detail::MessagingEntityKind::Source);
-    try
-    {
-      Azure::Core::Amqp::_internal::MessageReceiver receiver{
-          CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
-      receiver.Open(amqpTracingContext.Context);
-      m_receiver = std::move(receiver);
-      m_receiverGeneration = rebuiltGeneration;
-      _detail::LogAmqpLifecycle(Logger::Level::Informational, diagnosticsContext, "reattached");
-    }
-    catch (std::exception const& ex)
-    {
-      amqpTracingContext.Span.AddEvent(ex);
-      _detail::LogAmqpLifecycle(
-          Logger::Level::Warning, diagnosticsContext, "reattach_failed", ex.what());
-      throw;
-    }
+          auto amqpTracingContext = _detail::StartAmqpSpan(
+              m_tracingFactory,
+              "PartitionClient.AmqpLink.Open",
+              "receive",
+              m_eventHubName,
+              m_fullyQualifiedNamespace,
+              Azure::Nullable<size_t>{},
+              diagnosticsContext,
+              retryAttempt,
+              context,
+              _detail::MessagingEntityKind::Source);
+          try
+          {
+            Azure::Core::Amqp::_internal::MessageReceiver receiver{
+                CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
+            receiver.Open(amqpTracingContext.Context);
+            m_receiver = std::move(receiver);
+          }
+          catch (std::exception const& ex)
+          {
+            amqpTracingContext.Span.AddEvent(ex);
+            throw;
+          }
+        },
+        _detail::LogAmqpLifecycle);
   }
 
   PartitionClient::~PartitionClient()

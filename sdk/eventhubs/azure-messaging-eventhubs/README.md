@@ -339,7 +339,7 @@ AMQP lifecycle records start with `Event Hubs AMQP lifecycle:` and contain query
 
 Failure records use the AMQP error-condition namespace to attribute `amqp:connection:*` and `amqp:session:*` failures to the connection or session. Other failures are attributed to the link operation where the client observed them.
 
-The producer gives every rebuilt connection, session, and link the same component generation. A receiver reattachment increases the link generation while keeping its owning connection and session. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
+The producer gives every rebuilt connection, session, and link the same component generation. Every receiver replacement attempt gets a new link generation, including attempts that fail to attach, while keeping its owning connection and session. Close failures retain the generation of the receiver being closed. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
 
 Azure Core does not currently expose a provider-neutral metrics API to service libraries. Applications can derive failure and recreation counters from lifecycle records, and latency histograms from the operation and AMQP child span durations.
 
