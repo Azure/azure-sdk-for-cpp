@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0-beta.8 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.8 (2026-11-09)
 
 ### Breaking Changes
 
@@ -16,8 +14,6 @@
 - Serialized Boolean, Int32, and finite Double properties as native JSON values, preserving their types during read-modify-write operations. Int64 and non-finite Double values retain their string representation and type annotations.
 - Preserved query options and key selectors across pages and supported partition-only continuation tokens.
 - Escaped single quotes in OData entity keys before URL encoding for point, query, and transaction requests.
-
-### Other Changes
 
 ## 1.0.0-beta.7 (2026-11-04)
 
