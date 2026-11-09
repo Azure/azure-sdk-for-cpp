@@ -6,7 +6,16 @@
 
 ### Breaking Changes
 
+- `UpdateEntity` and `MergeEntity` now send `If-Match: *` when the entity's ETag is empty. A missing entity returns 404 instead of being inserted. Use `UpdateOrInsertEntity` or `MergeOrInsertEntity` to retain the previous upsert behavior.
+- Serializing an invalid Boolean, Int32, or Double property value now throws `std::invalid_argument` instead of sending the invalid value to the service.
+
 ### Bugs Fixed
+
+- Fixed multipart transaction framing, the `InsertReplace` request method and body, and `UpdateMerge` ETag conditions.
+- Preserved native JSON Boolean, Int32, and Double property types when responses omit OData type annotations.
+- Serialized Boolean, Int32, and finite Double properties as native JSON values, preserving their types during read-modify-write operations. Int64 and non-finite Double values retain their string representation and type annotations.
+- Preserved query options and key selectors across pages and supported partition-only continuation tokens.
+- Escaped single quotes in OData entity keys before URL encoding for point, query, and transaction requests.
 
 ### Other Changes
 

@@ -5,10 +5,34 @@
 
 #include <azure/core/internal/json/json.hpp>
 
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+
 using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::Models;
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
+  namespace {
+    bool IsInt32(Core::Json::_internal::json const& value)
+    {
+      using Json = Core::Json::_internal::json;
+      auto const minimum = (std::numeric_limits<std::int32_t>::min)();
+      auto const maximum = (std::numeric_limits<std::int32_t>::max)();
+      if (value.is_number_unsigned())
+      {
+        return value.get<Json::number_unsigned_t>()
+            <= static_cast<Json::number_unsigned_t>(maximum);
+      }
+      if (!value.is_number_integer())
+      {
+        return false;
+      }
+      auto const number = value.get<Json::number_integer_t>();
+      return number >= minimum && number <= maximum;
+    }
+  } // namespace
+
   std::string const Serializers::CreateEntity(Models::TableEntity const& tableEntity)
   {
     std::string jsonBody;
@@ -22,7 +46,33 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
         jsonRoot[entry.first] = entry.second.Value;
         if (entry.second.Type.HasValue())
         {
-          jsonRoot[entry.first + "@odata.type"] = entry.second.Type.Value().ToString();
+          auto const& type = entry.second.Type.Value();
+          bool const isBoolean = type == TableEntityDataType::EdmBoolean;
+          bool const isInt32 = type == TableEntityDataType::EdmInt32;
+          bool const isDouble = type == TableEntityDataType::EdmDouble;
+          bool const isSpecialDouble = isDouble
+              && (entry.second.Value == "NaN" || entry.second.Value == "Infinity"
+                  || entry.second.Value == "-Infinity");
+          if ((isBoolean || isInt32 || isDouble) && !isSpecialDouble)
+          {
+            auto const value
+                = Core::Json::_internal::json::parse(entry.second.Value, nullptr, false);
+            if ((isBoolean && !value.is_boolean()) || (isInt32 && !IsInt32(value))
+                || (isDouble && !value.is_number()))
+            {
+              throw std::invalid_argument(
+                  "Invalid " + type.ToString() + " value for property '" + entry.first + "'.");
+            }
+            if (isDouble)
+            {
+              jsonRoot[entry.first] = value.get<double>();
+            }
+            else
+            {
+              jsonRoot[entry.first] = value;
+            }
+          }
+          jsonRoot[entry.first + "@odata.type"] = type.ToString();
         }
       }
       jsonBody = jsonRoot.dump();
@@ -554,6 +604,18 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
         tableEntity.Properties[name] = TableEntityProperty(
             value, static_cast<Azure::Data::Tables::Models::TableEntityDataType>(type));
         erasable.push_back(typeFieldName);
+      }
+      else if (json.at(name).is_boolean())
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmBoolean);
+      }
+      else if (IsInt32(json.at(name)))
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmInt32);
+      }
+      else if (json.at(name).is_number_float())
+      {
+        tableEntity.Properties[name] = TableEntityProperty(value, TableEntityDataType::EdmDouble);
       }
       else
       {
