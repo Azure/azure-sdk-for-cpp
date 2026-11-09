@@ -5,8 +5,11 @@
 #include <chrono>
 #include <map>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::Models;
@@ -204,8 +207,20 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(entity.Properties.at("Count").Value, entity.Properties.at("IntegerString").Value);
     EXPECT_EQ(entity.Properties.at("Ratio").Value, entity.Properties.at("DoubleString").Value);
 
-    auto const roundTrip = Serializers::DeserializeEntity(
-        Core::Json::_internal::json::parse(Serializers::CreateEntity(entity)));
+    auto const serialized = Core::Json::_internal::json::parse(Serializers::CreateEntity(entity));
+    for (auto const& expected : types)
+    {
+      SCOPED_TRACE(expected.first);
+      EXPECT_EQ(serialized.at(expected.first).type(), payload.at(expected.first).type());
+      EXPECT_EQ(serialized.at(expected.first), payload.at(expected.first));
+      EXPECT_EQ(serialized.at(expected.first + "@odata.type"), expected.second.ToString());
+    }
+    for (auto const& name : {"BooleanString", "IntegerString", "DoubleString"})
+    {
+      EXPECT_TRUE(serialized.at(name).is_string());
+      EXPECT_EQ(serialized.at(name), payload.at(name));
+    }
+    auto const roundTrip = Serializers::DeserializeEntity(serialized);
     for (auto const& expected : types)
     {
       ASSERT_TRUE(roundTrip.Properties.at(expected.first).Type.HasValue());
@@ -250,6 +265,63 @@ namespace Azure { namespace Data { namespace Test {
           payload.at(property.first + "@odata.type").get<std::string>());
       auto const& value = payload.at(property.first);
       EXPECT_EQ(property.second.Value, value.is_string() ? value.get<std::string>() : value.dump());
+    }
+
+    auto const serialized = Core::Json::_internal::json::parse(Serializers::CreateEntity(entity));
+    ASSERT_TRUE(serialized.at("IntegralDouble").is_number_float());
+    EXPECT_DOUBLE_EQ(serialized.at("IntegralDouble").get<double>(), 42.0);
+    for (auto const& property : entity.Properties)
+    {
+      SCOPED_TRACE(property.first);
+      EXPECT_EQ(
+          serialized.at(property.first + "@odata.type"), property.second.Type.Value().ToString());
+      if (property.first != "IntegralDouble")
+      {
+        EXPECT_TRUE(serialized.at(property.first).is_string());
+        EXPECT_EQ(serialized.at(property.first), payload.at(property.first));
+      }
+    }
+  }
+
+  TEST_F(SerializersTest, DeserializeEntityDoesNotInferOutOfRangeIntegers)
+  {
+    auto const payload = R"({
+      "BelowMinimum": -2147483649,
+      "AboveMaximum": 2147483648,
+      "SignedMinimum": -9223372036854775808,
+      "SignedMaximum": 9223372036854775807,
+      "UnsignedMaximum": 18446744073709551615
+    })"_json;
+    auto const entity = Serializers::DeserializeEntity(payload);
+    for (auto const& property : entity.Properties)
+    {
+      SCOPED_TRACE(property.first);
+      EXPECT_FALSE(property.second.Type.HasValue());
+      EXPECT_EQ(property.second.Value, payload.at(property.first).dump());
+    }
+  }
+
+  TEST_F(SerializersTest, CreateEntityRejectsInvalidPrimitiveValues)
+  {
+    std::vector<std::pair<TableEntityDataType, std::string>> const cases{
+        {TableEntityDataType::EdmBoolean, ""},
+        {TableEntityDataType::EdmBoolean, "1"},
+        {TableEntityDataType::EdmBoolean, "\"true\""},
+        {TableEntityDataType::EdmInt32, "2147483648"},
+        {TableEntityDataType::EdmInt32, "-2147483649"},
+        {TableEntityDataType::EdmInt32, "18446744073709551615"},
+        {TableEntityDataType::EdmInt32, "42.0"},
+        {TableEntityDataType::EdmInt32, "42invalid"},
+        {TableEntityDataType::EdmDouble, "null"},
+        {TableEntityDataType::EdmDouble, "true"},
+        {TableEntityDataType::EdmDouble, "\"1.5\""},
+        {TableEntityDataType::EdmDouble, "1e309"}};
+    for (auto const& testCase : cases)
+    {
+      SCOPED_TRACE(testCase.first.ToString() + ":" + testCase.second);
+      TableEntity entity;
+      entity.Properties["Value"] = TableEntityProperty(testCase.second, testCase.first);
+      EXPECT_THROW(Serializers::CreateEntity(entity), std::invalid_argument);
     }
   }
 

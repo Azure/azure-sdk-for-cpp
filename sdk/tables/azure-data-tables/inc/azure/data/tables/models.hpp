@@ -449,13 +449,18 @@ namespace Azure { namespace Data { namespace Tables {
       }
       /**
        * Property value.
+       * Boolean, Int32, and finite Double properties use JSON literal text and serialize as native
+       * JSON values. Invalid literal text or an out-of-range Int32 value causes serialization to
+       * throw std::invalid_argument. Double values NaN, Infinity, and -Infinity serialize as
+       * annotated strings, as do other explicitly typed string-valued properties.
        */
       std::string Value;
       /**
        * Property type.
        * When deserializing, an explicit OData type annotation takes precedence; otherwise, native
-       * JSON booleans, integers, and floating-point numbers infer Edm.Boolean, Edm.Int32, and
-       * Edm.Double respectively. Unannotated strings leave the type unset.
+       * JSON booleans, integers in the Int32 range, and floating-point numbers infer Edm.Boolean,
+       * Edm.Int32, and Edm.Double respectively. Unannotated strings and integers outside the Int32
+       * range leave the type unset.
        */
       Azure::Nullable<TableEntityDataType> Type;
     };

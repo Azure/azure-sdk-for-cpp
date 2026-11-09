@@ -435,6 +435,44 @@ namespace Azure { namespace Data { namespace Test {
         responseBody);
   }
 
+  TEST_F(TablesRequestTest, GetUpdateRoundTripWritesNativeJson)
+  {
+    QueueResponse(
+        HttpStatusCode::Ok,
+        R"({"PartitionKey":"partition","RowKey":"row","Enabled":true,"Count":42,
+          "Ratio":1.2345678901234567,"Text":"42","Large":"9223372036854775807",
+          "Large@odata.type":"Edm.Int64","Special":"Infinity",
+          "Special@odata.type":"Edm.Double"})");
+    QueueResponse(HttpStatusCode::NoContent, "", {{"ETag", "W/\"updated\""}});
+    QueueResponse(HttpStatusCode::Accepted);
+    auto client = CreateClient();
+    auto const entity = client.GetEntity("partition", "row").Value;
+    client.UpdateEntity(entity);
+    client.SubmitTransaction({{TransactionActionType::InsertReplace, entity}});
+    ASSERT_EQ(m_requests.size(), 3U);
+    std::vector<BatchRequest> parts;
+    ParseBatchRequest(m_requests[2], parts);
+    ASSERT_EQ(parts.size(), 1U);
+    for (auto const& body : {m_requests[1].Body, parts[0].Body})
+    {
+      auto const payload = json::parse(body);
+      ASSERT_TRUE(payload.at("Enabled").is_boolean());
+      EXPECT_TRUE(payload.at("Enabled").get<bool>());
+      ASSERT_TRUE(payload.at("Count").is_number_integer());
+      EXPECT_EQ(payload.at("Count").get<int>(), 42);
+      ASSERT_TRUE(payload.at("Ratio").is_number_float());
+      EXPECT_DOUBLE_EQ(payload.at("Ratio").get<double>(), 1.2345678901234567);
+      EXPECT_EQ(payload.at("Text"), "42");
+      EXPECT_EQ(payload.at("Large"), "9223372036854775807");
+      EXPECT_EQ(payload.at("Large@odata.type"), "Edm.Int64");
+      EXPECT_EQ(payload.at("Special"), "Infinity");
+      EXPECT_EQ(payload.at("Special@odata.type"), "Edm.Double");
+      EXPECT_EQ(payload.at("Enabled@odata.type"), "Edm.Boolean");
+      EXPECT_EQ(payload.at("Count@odata.type"), "Edm.Int32");
+      EXPECT_EQ(payload.at("Ratio@odata.type"), "Edm.Double");
+    }
+  }
+
   TEST_F(TablesRequestTest, PointOperationsEscapeODataKeys)
   {
     struct KeyCase
