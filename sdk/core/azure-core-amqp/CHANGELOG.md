@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- uAMQP connection and link failure logs now include the connection container ID or link name. Transitions to an error state use the warning log level.
+
 ## 1.0.0-beta.14 (2026-11-06)
 
 ### Bugs Fixed
@@ -63,8 +65,6 @@
 - The uAMQP management client now names the management node and the open status in the lines that it writes when an open fails, and it keeps the text of the exception that ended the open. The message sender open failure moved from the Error level to the Warning level, because that call reports the failure to its caller.
 - A claims based security open that fails now carries the reason that the layer below reported. `CbsOpenResult::Error` covers every transport, TLS and link failure, so a reader holding only the result could not separate a refused socket from a rejected attach. The management client wrote that reason to the log and then dropped it, because `ManagementClientImpl::Open` reports a failure as a status and the exception that named the cause was destroyed in the handler. The reason now travels with the status and reaches both the warning and the `CbsOpenFailedException` message, so a caller that logs the exception and has no log listener can still tell what failed. It names which of the two links failed, because the sender and the receiver fail for different causes. The reason is empty when the layer below gave none, and the sentence then reads exactly as it did before. It never holds the token.
 - The claims based security object now keeps the AMQP error that the service sent. `ClaimsBasedSecurityImpl::OnError` receives the condition, the description, and the info map, which is the richest statement the service makes about a refused claim, and it only wrote them to the log. They are now added to the reason that the open failure carries. The capture takes a lock of its own, because that callback runs on the polling thread while the management client holds its open lock.
-
-- uAMQP connection and link failure logs now include the connection container ID or link name. Transitions to an error state use the warning log level.
 
 ## 1.0.0-beta.12 (2026-05-14)
 
