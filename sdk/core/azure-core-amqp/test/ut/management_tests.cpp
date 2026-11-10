@@ -631,8 +631,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     // The queue for that request must be gone. Before the fix it stayed in the map.
     EXPECT_EQ(std::size_t{0}, management.GetPendingOperationCount());
 
-    managementEndpoint->SetSwallowRequests(false);
-
     management.Close();
 
     StopServerListening();
