@@ -327,7 +327,7 @@ The instrumentation scope is `azure-messaging-eventhubs-cpp` with the package ve
 
 When the application does not set `TracingProvider`, the client creates no spans and records nothing. There is no global fallback provider.
 
-For a complete, buildable exporter setup, see the [OpenTelemetry traces and logs sample](samples/opentelemetry/README.md). It configures batched OTLP/HTTP exporters, bridges Azure Logger to OpenTelemetry Logs, and includes a local collector check and a live send example. For the tracing architecture, see [Distributed Tracing in the C++ SDK][distributed_tracing].
+For a complete, buildable exporter setup, see the [OpenTelemetry traces and logs sample](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/README.md). It configures batched OTLP/HTTP exporters, bridges Azure Logger to OpenTelemetry Logs, and includes a local collector check and a live send example. For the tracing architecture, see [Distributed Tracing in the C++ SDK][distributed_tracing].
 
 # Troubleshooting
 
@@ -341,7 +341,7 @@ Failure records use the AMQP error-condition namespace to attribute `amqp:connec
 
 The producer gives every rebuilt connection, session, and link the same component generation. Every receiver replacement attempt gets a new link generation, including attempts that fail to attach, while keeping its owning connection and session. Close failures retain the generation of the receiver being closed. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
 
-This package does not emit native OpenTelemetry metrics, and Azure Core does not currently expose a provider-neutral metrics API to service libraries. Adding a metrics exporter alone does not produce SDK metrics. Applications can create their own counters and histograms or configure a backend to derive failure/recreation counters from lifecycle records and latency histograms from span durations. See the [sample metrics guidance](samples/opentelemetry/README.md) for the distinction and an application-owned metrics exporter reference.
+This package does not emit native OpenTelemetry metrics, and Azure Core does not currently expose a provider-neutral metrics API to service libraries. Adding a metrics exporter alone does not produce SDK metrics. Applications can create their own counters and histograms or configure a backend to derive failure/recreation counters from lifecycle records and latency histograms from span durations. See the [sample metrics guidance](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/README.md) for the distinction and an application-owned metrics exporter reference.
 
 
 ## Contributing

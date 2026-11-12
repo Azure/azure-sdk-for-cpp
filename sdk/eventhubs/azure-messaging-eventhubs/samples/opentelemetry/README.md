@@ -23,7 +23,7 @@ in older package releases. The sample is opt-in and does not add dependencies to
 The repository's vcpkg baseline pins **opentelemetry-cpp 1.28.0** with the `otlp-http` feature,
 which supplies the trace and log HTTP exporters. It also supplies their curl/protobuf dependencies.
 Use a C++14 compiler, CMake, and vcpkg as described in the repository
-[development guide](../../../../../CONTRIBUTING.md). On Windows, use a static triplet such as
+[development guide](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md). On Windows, use a static triplet such as
 `x64-windows-static` because the Azure OpenTelemetry adapter requires it.
 
 From the repository root, with `VCPKG_ROOT` set to your vcpkg checkout:
@@ -33,7 +33,7 @@ cmake -S . -B build-otel \
   -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
   -DBUILD_SAMPLES=ON \
   -DDISABLE_RUST_IN_BUILD=ON \
-  -DAZURE_EVENTHUBS_BUILD_OPENTELEMETRY_SAMPLE=ON
+  -D AZURE_EVENTHUBS_BUILD_OPENTELEMETRY_SAMPLE=ON
 cmake --build build-otel --target eventhubs-opentelemetry --config Debug --parallel
 ```
 
@@ -45,7 +45,7 @@ executable filename; Windows also adds `.exe`.
 
 For an application outside this repository, link the Azure Event Hubs, Azure Identity, and
 Azure OpenTelemetry adapter packages plus `opentelemetry-cpp::otlp_http_exporter` and
-`opentelemetry-cpp::otlp_http_log_record_exporter`. See this directory's [CMakeLists.txt](CMakeLists.txt)
+`opentelemetry-cpp::otlp_http_log_record_exporter`. See this directory's [CMakeLists.txt](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/CMakeLists.txt)
 for the complete target list. Enable the `otlp-http` feature when installing opentelemetry-cpp
 with vcpkg. The sample uses Azure Identity only for the optional live send.
 
@@ -103,7 +103,7 @@ and permission to send data; it is separate from the local exporter check.
 For receive tracing, assign the same adapter to `ConsumerClientOptions.TracingProvider` before
 constructing a consumer. Partition clients created by that consumer inherit the provider;
 `PartitionClient.ReceiveEvents` creates operation spans. The
-[package README](../../README.md#distributed-tracing) describes the emitted spans and attributes.
+[package README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/README.md#distributed-tracing) describes the emitted spans and attributes.
 
 ## Ownership, severity, and shutdown
 

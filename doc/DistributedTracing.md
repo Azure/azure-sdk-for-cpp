@@ -111,7 +111,7 @@ producerOptions.TracingProvider = provider;
 
 ### Complete Event Hubs exporter example
 
-The [Event Hubs OpenTelemetry sample](../sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/README.md) provides a buildable OTLP/HTTP trace exporter, batch processing, and a local collector configuration. It also shows the separate application bridge from Azure Logger to an OpenTelemetry Logs exporter, including severity mapping and provider shutdown. A tracing provider alone does not export SDK logs. Event Hubs does not emit native OpenTelemetry metrics; the sample explains application-owned and backend-derived alternatives.
+The [Event Hubs OpenTelemetry sample](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/README.md) provides a buildable OTLP/HTTP trace exporter, batch processing, and a local collector configuration. It also shows the separate application bridge from Azure Logger to an OpenTelemetry Logs exporter, including severity mapping and provider shutdown. A tracing provider alone does not export SDK logs. Event Hubs does not emit native OpenTelemetry metrics; the sample explains application-owned and backend-derived alternatives.
 
 ## Distributed Tracing Service Integration
 
