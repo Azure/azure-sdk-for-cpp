@@ -253,6 +253,15 @@ jobs:
         condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), ne('${{parameters.ServiceDirectory}}', 'core'), ne('${{parameters.ServiceDirectory}}', 'template'), ne('${{parameters.ServiceDirectory}}', 'appconfiguration'))
         name: RestoreRecordings
 
+      - ${{ if eq(parameters.CoverageEnabled, true) }}:
+        - pwsh: |
+            $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+            dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
+            Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
+          displayName: Install coverage tools
+          condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
+
       - pwsh: |
           ctest `
             -C Debug `
@@ -287,14 +296,6 @@ jobs:
         condition: succeededOrFailed()
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
-        - pwsh: |
-            $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
-            dotnet tool install -g dotnet-reportgenerator-globaltool
-            dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
-            Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
-          displayName: Install coverage tools
-          condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
-
         # Make coverage targets (specified in coverage_targets.txt) and assemble
         # coverage report
         - bash: |
