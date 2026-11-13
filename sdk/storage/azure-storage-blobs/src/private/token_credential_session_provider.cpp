@@ -21,6 +21,7 @@
 namespace {
 constexpr auto SessionRefreshLeadTime = std::chrono::seconds(30);
 constexpr auto SessionRefreshSuppression = std::chrono::seconds(30);
+constexpr auto SessionCreationWaitInterval = std::chrono::milliseconds(100);
 constexpr auto SessionFailureCooldown = std::chrono::minutes(5);
 
 } // namespace
@@ -220,37 +221,63 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       return {};
     }
+    // One cache entry per container, shared by every caller using this provider.
     auto entry = GetCacheEntry(containerUrl);
+    // Released automatically on every return or throw, including after CreateSession fails.
+    std::unique_lock<std::timed_mutex> sessionCreationLock(
+        entry->SessionCreationMutex, std::defer_lock);
     auto now = Azure::DateTime::clock::now();
+    // Recheck cached state after each wait. Another caller may have created a session or failed.
+    while (true)
     {
-      std::lock_guard<std::mutex> lock(entry->Mutex);
-      if (entry->Current.HasValue()
-          && now < entry->Current.Value().ExpiresOn - SessionRefreshLeadTime)
+      // Before claiming creation, so a cancelled caller can't start the suppression window.
+      context.ThrowIfCancelled();
       {
-        return entry->Current;
-      }
-      if (entry->CooldownUntil > now)
-      {
+        std::lock_guard<std::mutex> lock(entry->Mutex);
+        now = Azure::DateTime::clock::now();
+        // Use the cached session if it isn't close to expiring.
+        if (entry->Current.HasValue()
+            && now < entry->Current.Value().ExpiresOn - SessionRefreshLeadTime)
+        {
+          return entry->Current;
+        }
+        // Creation is paused after a soft failure; use an unexpired cached session or bearer.
+        if (entry->CooldownUntil > now)
+        {
+          if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+          {
+            return entry->Current;
+          }
+          return {};
+        }
+        // Only try_lock while holding entry->Mutex. The wait below may already own the lock.
+        if (sessionCreationLock.owns_lock() || sessionCreationLock.try_lock())
+        {
+          // A recent attempt left no fresh session; wait out suppression instead of retrying.
+          if (entry->LastRefreshStarted + SessionRefreshSuppression > now)
+          {
+            if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
+            {
+              return entry->Current;
+            }
+            return {};
+          }
+          entry->LastRefreshStarted = now;
+          break;
+        }
         if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
         {
           return entry->Current;
         }
-        return {};
       }
-      if (entry->LastRefreshStarted + SessionRefreshSuppression > now)
-      {
-        if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
-        {
-          return entry->Current;
-        }
-        return {};
-      }
-      entry->LastRefreshStarted = now;
+      // Bounded wait outside entry->Mutex so the cancellation check above runs every interval.
+      static_cast<void>(sessionCreationLock.try_lock_for(SessionCreationWaitInterval));
     }
 
     try
     {
       auto session = CreateSession(containerUrl, context);
+      // Cache the new session unless a longer-lived one is already stored.
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (!entry->Current.HasValue() || entry->Current.Value().ExpiresOn < session.ExpiresOn)
       {
@@ -260,6 +287,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (const StorageException& e)
     {
+      // Only 5xx, 403, and FeatureNotEnabled start a cooldown; other errors are rethrown.
       const auto statusCode = static_cast<int>(e.StatusCode);
       const bool softFailure = statusCode >= 500 || statusCode == 403
           || (statusCode == 400 && e.ErrorCode == "FeatureNotEnabled");
@@ -285,6 +313,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (const std::exception&)
     {
+      // Pause creation for the cooldown period and fall back to the cached session or bearer.
       now = Azure::DateTime::clock::now();
       std::lock_guard<std::mutex> lock(entry->Mutex);
       if (entry->Current.HasValue() && now < entry->Current.Value().ExpiresOn)
