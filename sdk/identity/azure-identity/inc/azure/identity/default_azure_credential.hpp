@@ -34,6 +34,11 @@ namespace Azure { namespace Identity {
    * though the credentials being used and their order is documented, it may be changed in the
    * future versions of the SDK, potentially introducing breaking changes in its behavior.
    *
+   * @details The managed identity credential in the chain uses the client ID from the
+   * `AZURE_CLIENT_ID` environment variable when it is non-empty. Otherwise, it does not specify
+   * an identity selector. This does not change standalone
+   * #Azure::Identity::ManagedIdentityCredential constructors.
+   *
    * @note This credential is intended to be used at the early stages of development, to allow the
    * developer some time to work with the other aspects of the SDK, and later to replace this
    * credential with the exact credential that is the best fit for the application. It is not
