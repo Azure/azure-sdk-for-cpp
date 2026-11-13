@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- [[#7336]](https://github.com/Azure/azure-sdk-for-cpp/issues/7336) Added distributed tracing. `ProducerClientOptions` and `ConsumerClientOptions` gained a `TracingProvider` field. `ProducerClient::Send` and `PartitionClient::ReceiveEvents` create one span per call when a tracing provider is set. Child spans measure AMQP link attachment, send disposition, and blocking receive latency. AMQP lifecycle logs identify the client, partition, component, and component generation for failures and rebuilds.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Corrected receiver and producer lifecycle diagnostics during recovery. Receiver links retain a unique instance identity, pending receive failures are not reported twice, and peer-detached senders report their discard at the informational level. Receiver attachment spans and success records now wait for the remote handshake on uAMQP.
 
 ### Other Changes
 

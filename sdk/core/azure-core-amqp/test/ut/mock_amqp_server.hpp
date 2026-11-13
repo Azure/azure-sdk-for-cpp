@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       const std::string& GetName() const { return m_name; }
 
-      bool OnLinkAttached(
+      virtual bool OnLinkAttached(
           Azure::Core::Amqp::_internal::Session const& session,
           std::string const& linkName,
           Azure::Core::Amqp::_internal::LinkEndpoint& linkEndpoint,
@@ -118,8 +118,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             receiverOptions.Name = linkName;
             receiverOptions.MessageTarget = target;
             receiverOptions.InitialDeliveryCount = 0;
+            auto receiverSource = source;
+            try
+            {
+              // A producer may leave its source address unspecified. The mock receiver still
+              // needs an address when it opens, so use the destination in that case.
+              if (source.GetAddress().IsNull())
+              {
+                receiverSource = static_cast<std::string>(target.GetAddress());
+              }
+            }
+            catch (std::runtime_error const&)
+            {
+              receiverSource = static_cast<std::string>(target.GetAddress());
+            }
             m_receiver[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
-                session.CreateMessageReceiver(linkEndpoint, source, receiverOptions, this));
+                session.CreateMessageReceiver(linkEndpoint, receiverSource, receiverOptions, this));
 
             // NOTE: The linkEndpoint needs to be attached before this function returns in order to
             // correctly process incoming attach requests. Otherwise, the attach request will be
@@ -188,6 +202,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
     protected:
+      void RejectLinkAttachment(
+          Azure::Core::Amqp::_internal::Session const& session,
+          Azure::Core::Amqp::_internal::LinkEndpoint const& linkEndpoint,
+          Azure::Core::Amqp::Models::_internal::AmqpError const& error)
+      {
+        session.SendDetach(linkEndpoint, true, error);
+      }
+
       bool HasMessageSender(std::string const& linkName = {}) const
       {
         if (linkName.empty())

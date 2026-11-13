@@ -86,6 +86,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         AsyncOperationQueue<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
             m_messageQueue;
 
+    // An opt-in synchronous Open waits for the remote attach or its failure.
+    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
+        m_openQueue;
+
     // When we close a uAMQP messagereceiver, the link is left in the half closed state. We need to
     // wait for the link to be fully closed before we can close the session. This queue will hold
     // the close operation until the link is fully closed.

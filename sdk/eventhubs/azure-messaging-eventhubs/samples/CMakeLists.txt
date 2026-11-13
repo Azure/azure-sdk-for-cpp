@@ -10,3 +10,8 @@ endif()
 add_subdirectory(basic-operations)
 add_subdirectory(produce-events)
 add_subdirectory(consume-events)
+
+option(AZURE_EVENTHUBS_BUILD_OPENTELEMETRY_SAMPLE "Build the opt-in OTLP/HTTP exporter sample" OFF)
+if(AZURE_EVENTHUBS_BUILD_OPENTELEMETRY_SAMPLE)
+  add_subdirectory(opentelemetry)
+endif()

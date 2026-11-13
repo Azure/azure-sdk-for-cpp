@@ -185,6 +185,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Cache the error we received in the OnDetach notification so we can return it to the
       // user on the next receive which fails.
       m_savedMessageError = error;
+      if (m_options.WaitForOpen)
+      {
+        m_openQueue.CompleteOperation(
+            error ? error
+                  : Models::_internal::AmqpError{
+                        Models::_internal::AmqpErrorCondition::InternalError,
+                        "Message receiver detached before attachment completed.",
+                        {}});
+      }
 
       // When we've received a link detached, we can complete the close.
       m_closeQueue.CompleteOperation(error);
@@ -348,8 +357,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (receiver->m_options.EnableTrace)
     {
-      Log::Stream(Logger::Level::Verbose)
-          << "Message receiver state change " << oldState << " -> " << newState;
+      Log::Stream(
+          newState == MESSAGE_RECEIVER_STATE_ERROR ? Logger::Level::Warning
+                                                   : Logger::Level::Verbose)
+          << "Message receiver link '" << receiver->m_options.Name << "' state change " << oldState
+          << " -> " << newState;
     }
     // If the message receiver isn't open, or if it's in the process of being destroyed, ignore
     // this notification.
@@ -375,17 +387,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // queue indicating an error occurred.
       if (newState == MESSAGE_RECEIVER_STATE_ERROR && oldState != MESSAGE_RECEIVER_STATE_ERROR)
       {
-        if (receiver->m_savedMessageError)
+        auto error = receiver->m_savedMessageError;
+        if (!error)
         {
-          receiver->m_messageQueue.CompleteOperation(nullptr, receiver->m_savedMessageError);
-        }
-        else
-        {
-          Models::_internal::AmqpError error;
           error.Condition = Models::_internal::AmqpErrorCondition::InternalError;
           error.Description = "Message receiver has transitioned to the error state.";
-          receiver->m_messageQueue.CompleteOperation(nullptr, error);
         }
+        receiver->m_messageQueue.CompleteOperation(nullptr, error);
+        if (receiver->m_options.WaitForOpen)
+        {
+          receiver->m_openQueue.CompleteOperation(error);
+        }
+      }
+
+      if (receiver->m_options.WaitForOpen && oldState == MESSAGE_RECEIVER_STATE_OPENING
+          && newState == MESSAGE_RECEIVER_STATE_OPEN)
+      {
+        receiver->m_openQueue.CompleteOperation(Models::_internal::AmqpError{});
       }
 
       // When we transition from the closing to idle state, we can return from the close
@@ -407,8 +425,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           m_session, static_cast<std::string>(m_source.GetAddress()), context);
     }
 
+    PendingOperationRegistry::Registration registration;
     {
       auto lock{m_session->GetConnection()->Lock()};
+      if (m_options.WaitForOpen)
+      {
+        m_openQueue.Clear();
+      }
 
       // Once we've authenticated the connection, establish the link and receiver.
       // We cannot do this before authenticating the client.
@@ -439,6 +462,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       }
       m_receiverOpen = true;
+      if (m_options.WaitForOpen)
+      {
+        // Register while holding the connection lock so a connection failure cannot be missed.
+        registration = m_session->GetConnection()->GetPendingOperations().Register(
+            [this](Models::_internal::AmqpError const& error) {
+              m_openQueue.CompleteOperation(error);
+            });
+      }
 
       if (m_options.EnableTrace)
       {
@@ -457,6 +488,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (!m_deferLinkPolling)
     {
       EnableLinkPolling();
+    }
+
+    if (m_options.WaitForOpen)
+    {
+      try
+      {
+        Context const openContext{
+            _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+        auto result = m_openQueue.WaitForResult(openContext);
+        if (!result)
+        {
+          if (context.IsCancelled())
+          {
+            throw Azure::Core::OperationCancelledException(
+                "Message receiver open operation was cancelled.");
+          }
+          throw std::runtime_error("Message receiver open operation timed out.");
+        }
+        auto const& error = std::get<0>(*result);
+        if (error)
+        {
+          throw std::runtime_error(
+              "Message receiver open operation failed: " + error.Condition.ToString()
+              + " description: " + error.Description);
+        }
+      }
+      catch (...)
+      {
+        // Open failures must leave the receiver safe to destroy. Close tears down native state
+        // and polling references even if the peer cannot acknowledge the detach.
+        try
+        {
+          Close(context.WithDeadline(std::chrono::system_clock::now()));
+        }
+        catch (...)
+        {
+        }
+        throw;
+      }
     }
   }
 

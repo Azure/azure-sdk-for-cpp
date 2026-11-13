@@ -5,13 +5,16 @@
 
 #include "eventhubs_admin_client.hpp"
 #include "eventhubs_test_base.hpp"
+#include "eventhubs_tracing_test_doubles.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
 #include <chrono>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -86,6 +89,49 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(events[0]->EnqueuedTime.HasValue());
     EXPECT_TRUE(events[0]->SequenceNumber.HasValue());
     EXPECT_TRUE(events[0]->Offset.HasValue());
+  }
+
+  // The receive span needs a partition client, and a partition client needs a live AMQP link.
+  TEST_P(ConsumerClientTest, ReceiveEventsSpan_LIVEONLY_)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID
+        = std::string(testing::UnitTest::GetInstance()->current_test_info()->name())
+        + " Application";
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    options.TracingProvider = provider;
+
+    auto client = CreateConsumerClient("", options);
+
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Inclusive = true;
+    partitionOptions.StartPosition.Earliest = true;
+
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client->CreatePartitionClient("1", partitionOptions);
+
+    auto events = partitionClient.ReceiveEvents(1);
+    ASSERT_FALSE(events.empty());
+
+    auto span = FindSpan(provider, "PartitionClient.ReceiveEvents");
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("PartitionClient.ReceiveEvents", span->GetName());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Client, span->GetKind());
+
+    auto const& attributes = span->GetAttributes();
+    ASSERT_EQ(1u, attributes.count("messaging.operation"));
+    EXPECT_EQ("receive", attributes.at("messaging.operation"));
+    ASSERT_EQ(1u, attributes.count("messaging.system"));
+    EXPECT_EQ("eventhubs", attributes.at("messaging.system"));
+    ASSERT_EQ(1u, attributes.count("az.namespace"));
+    EXPECT_EQ("Microsoft.EventHub", attributes.at("az.namespace"));
+    ASSERT_EQ(1u, attributes.count("messaging.source.name"));
+    EXPECT_EQ(GetEventHubName(), attributes.at("messaging.source.name"));
+
+    ASSERT_EQ(1u, attributes.count("messaging.batch.message_count"));
+    EXPECT_EQ(std::to_string(events.size()), attributes.at("messaging.batch.message_count"));
   }
 
   TEST_P(ConsumerClientTest, GetEventHubProperties_LIVEONLY_)
