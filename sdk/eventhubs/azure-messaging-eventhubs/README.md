@@ -319,7 +319,7 @@ AMQP child spans also have these Event Hubs diagnostic attributes:
 | `az.eventhubs.partition.id` | The partition ID, or `<gateway>` for the producer gateway link. |
 | `az.eventhubs.amqp.component.type` | `link`. |
 | `az.eventhubs.amqp.component.name` | The AMQP link name. |
-| `az.eventhubs.amqp.component.id` | A unique ID composed from the client, partition, component generation, and type. |
+| `az.eventhubs.amqp.component.id` | A unique ID composed from the client, partition, component generation, and type. Receiver links also include a partition-client instance ID. |
 | `az.eventhubs.amqp.component.generation` | Starts at 1 and increases when the component is recreated. |
 | `az.eventhubs.retry.attempt` | The one-based retry or rebuild attempt, when applicable. |
 
@@ -339,7 +339,7 @@ AMQP lifecycle records start with `Event Hubs AMQP lifecycle:` and contain query
 
 Failure records use the AMQP error-condition namespace to attribute `amqp:connection:*` and `amqp:session:*` failures to the connection or session. Other failures are attributed to the link operation where the client observed them.
 
-The producer gives every rebuilt connection, session, and link the same component generation. Every receiver replacement attempt gets a new link generation, including attempts that fail to attach, while keeping its owning connection and session. Close failures retain the generation of the receiver being closed. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
+The producer gives every rebuilt connection, session, and link the same component generation. Every receiver replacement attempt gets a new link generation, including attempts that fail to attach, while keeping its owning connection and session. Each partition client has a unique receiver-instance ID that stays the same through recovery, so recreating a client for the same partition does not reuse link component IDs. Close failures retain the generation of the receiver being closed. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
 
 This package does not emit native OpenTelemetry metrics, and Azure Core does not currently expose a provider-neutral metrics API to service libraries. Adding a metrics exporter alone does not produce SDK metrics. Applications can create their own counters and histograms or configure a backend to derive failure/recreation counters from lifecycle records and latency histograms from span durations. See the [sample metrics guidance](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/opentelemetry/README.md) for the distinction and an application-owned metrics exporter reference.
 

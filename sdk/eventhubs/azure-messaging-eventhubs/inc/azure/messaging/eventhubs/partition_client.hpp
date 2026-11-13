@@ -101,6 +101,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_partitionUrl;
     /// The link name of the receiver. A rebuild reuses this name.
     std::string m_receiverName;
+    /// Distinguishes receiver instances created for the same consumer and partition.
+    std::string m_receiverInstanceId;
 
     /// Identifies the owning consumer and partition in lifecycle logs and spans.
     std::string m_clientIdentifier;
@@ -144,6 +146,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param session The AMQP session that carries the message receiver.
      * @param partitionUrl The address of the partition.
      * @param receiverName The link name of the message receiver.
+     * @param receiverInstanceId identifies this receiver instance across recovery attempts.
      * @param clientIdentifier identifies the owning consumer in lifecycle logs and spans.
      * @param partitionId identifies the partition in lifecycle logs and spans.
      * @param options options used to create the PartitionClient.
@@ -158,6 +161,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Amqp::_internal::Session const& session,
         std::string partitionUrl,
         std::string receiverName,
+        std::string receiverInstanceId,
         std::string clientIdentifier,
         std::string partitionId,
         PartitionClientOptions options,

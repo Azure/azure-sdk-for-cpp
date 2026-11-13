@@ -486,6 +486,79 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ((std::vector<std::string>{"closing", "close", "close_failed"}), events);
   }
 
+  TEST(EventHubsTracingTest, ReceiverInstancesHaveDistinctComponentIds)
+  {
+    _detail::AmqpDiagnosticsContext first{
+        "consumer:test", "2", "link", "receiver", 1, "first-receiver"};
+    auto second = first;
+    second.ComponentInstanceId = "second-receiver";
+
+    EXPECT_NE(
+        _detail::GetAmqpComponentIdentifier(first), _detail::GetAmqpComponentIdentifier(second));
+    EXPECT_EQ(
+        "consumer:test/partition/2/instance/first-receiver/generation/1/link",
+        _detail::GetAmqpComponentIdentifier(first));
+  }
+
+  TEST(EventHubsTracingTest, ReceiverRecoveryPreservesInstanceIdentity)
+  {
+    _detail::AmqpDiagnosticsContext active{
+        "consumer:test", "2", "link", "receiver", 1, "first-receiver"};
+    std::uint64_t nextGeneration = active.ComponentGeneration;
+    std::vector<std::string> instanceIds;
+    auto log = [&](Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const& diagnostics,
+                   std::string const&,
+                   std::string const&) { instanceIds.push_back(diagnostics.ComponentInstanceId); };
+    EXPECT_THROW(
+        _detail::RebuildAmqpReceiver(
+            active,
+            nextGeneration,
+            []() {},
+            [](auto const&) { throw std::runtime_error("attach rejected"); },
+            log),
+        std::runtime_error);
+    active.ComponentGeneration = _detail::RebuildAmqpReceiver(
+        active,
+        nextGeneration,
+        []() {},
+        [&](auto const& diagnostics) {
+          EXPECT_EQ("first-receiver", diagnostics.ComponentInstanceId);
+          EXPECT_EQ(3u, diagnostics.ComponentGeneration);
+        },
+        log);
+
+    EXPECT_EQ(3u, active.ComponentGeneration);
+    ASSERT_EQ(4u, instanceIds.size());
+    for (auto const& instanceId : instanceIds)
+    {
+      EXPECT_EQ("first-receiver", instanceId);
+    }
+  }
+
+  TEST(EventHubsTracingTest, ReceiverFailureKeepsSharedComponentIdentities)
+  {
+    _detail::AmqpDiagnosticsContext receiver{
+        "consumer:test", "2", "link", "receiver", 7, "first-receiver"};
+    auto const connection
+        = _detail::CreateAmqpFailureDiagnosticsContext(receiver, "amqp:connection:forced");
+    auto const session
+        = _detail::CreateAmqpFailureDiagnosticsContext(receiver, "amqp:session:window-violation");
+    auto const link
+        = _detail::CreateAmqpFailureDiagnosticsContext(receiver, "amqp:link:detach-forced");
+
+    EXPECT_TRUE(connection.ComponentInstanceId.empty());
+    EXPECT_TRUE(session.ComponentInstanceId.empty());
+    EXPECT_EQ(
+        "consumer:test/partition/2/generation/1/connection",
+        _detail::GetAmqpComponentIdentifier(connection));
+    EXPECT_EQ(
+        "consumer:test/partition/2/generation/1/session",
+        _detail::GetAmqpComponentIdentifier(session));
+    EXPECT_EQ(
+        _detail::GetAmqpComponentIdentifier(receiver), _detail::GetAmqpComponentIdentifier(link));
+  }
+
   TEST(EventHubsTracingTest, ReceiverRecoveryAttributesCloseFailureToActiveReceiver)
   {
     _detail::AmqpDiagnosticsContext active{"consumer:test", "2", "link", "receiver", 7};

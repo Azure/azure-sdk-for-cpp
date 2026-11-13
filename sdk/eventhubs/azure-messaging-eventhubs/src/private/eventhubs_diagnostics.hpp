@@ -20,6 +20,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     std::string ComponentType;
     std::string ComponentName;
     std::uint64_t ComponentGeneration{};
+    // Receiver instances can share a consumer and partition; retain this ID across recovery.
+    std::string ComponentInstanceId{};
   };
 
   // Includes the configured name when one exists and a UUID that remains stable for the lifetime
@@ -34,6 +36,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   // Uses the AMQP error-condition namespace to identify the failed protocol layer. Conditions
   // without a connection or session scope are observed at the link operation.
   std::string GetAmqpFailureComponentType(std::string const& errorCondition);
+
+  // Connection and session failures refer to shared components, not an individual receiver.
+  AmqpDiagnosticsContext CreateAmqpFailureDiagnosticsContext(
+      AmqpDiagnosticsContext const& receiverContext,
+      std::string const& errorCondition);
 
   // Formats a lifecycle record. Kept separate from LogAmqpLifecycle so its stable fields can be
   // covered without replacing the process-wide logger listener in a unit test.

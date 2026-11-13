@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Corrected receiver and producer lifecycle diagnostics during recovery. Receiver links retain a unique instance identity, pending receive failures are not reported twice, and peer-detached senders report their discard at the informational level. Receiver attachment spans and success records now wait for the remote handshake on uAMQP.
+
 ### Other Changes
 
 ## 1.0.0-beta.16 (2026-11-06)

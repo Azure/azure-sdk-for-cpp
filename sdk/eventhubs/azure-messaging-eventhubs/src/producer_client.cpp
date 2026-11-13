@@ -636,7 +636,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         << "The peer detached the link for partition '"
         << (partitionId.empty() ? std::string("<gateway>") : partitionId)
         << "'. Discard the cached stack before using it." << std::endl;
-    InvalidateSender(partitionId, observedGeneration, context);
+    InvalidateSender(
+        partitionId, observedGeneration, context, std::string{"The peer detached the link."});
 #else
     // The Rust backend reports a detached link through its own send path, so there is nothing
     // to test here.
@@ -771,6 +772,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::lock_guard<std::mutex> sendersLock(m_sendersLock);
       std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
+      // A failed attachment can install a new connection without advancing generation.
+      // Capture its identity under the same locks that protect the stack being removed.
+      stackId = guard.activeStackId.load();
       // Test again under the map lock. EnsureSender bumps the generation under that
       // lock, not under stackLock, so a rebuild can finish between the check above and
       // here and cache a fresh stack. This second check catches that window and keeps

@@ -89,6 +89,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief If true, require that the message sender be authenticated with the service. */
     bool AuthenticationRequired{true};
+
+    /** @brief Wait for the peer to confirm attachment before Open returns. The uAMQP backend
+     * otherwise initiates attachment asynchronously; the Rust backend always waits.
+     */
+    bool WaitForOpen{false};
   };
 
 #if ENABLE_UAMQP

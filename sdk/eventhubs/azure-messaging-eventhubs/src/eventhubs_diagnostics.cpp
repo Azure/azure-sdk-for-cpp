@@ -61,8 +61,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   {
     std::ostringstream identifier;
     identifier << diagnosticsContext.ClientId << "/partition/"
-               << DisplayPartition(diagnosticsContext.PartitionId) << "/generation/"
-               << diagnosticsContext.ComponentGeneration << "/" << diagnosticsContext.ComponentType;
+               << DisplayPartition(diagnosticsContext.PartitionId);
+    if (!diagnosticsContext.ComponentInstanceId.empty())
+    {
+      identifier << "/instance/" << diagnosticsContext.ComponentInstanceId;
+    }
+    identifier << "/generation/" << diagnosticsContext.ComponentGeneration << "/"
+               << diagnosticsContext.ComponentType;
     return identifier.str();
   }
 
@@ -77,6 +82,28 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       return "session";
     }
     return "link";
+  }
+
+  AmqpDiagnosticsContext CreateAmqpFailureDiagnosticsContext(
+      AmqpDiagnosticsContext const& receiverContext,
+      std::string const& errorCondition)
+  {
+    auto const componentType = GetAmqpFailureComponentType(errorCondition);
+    if (componentType == "session")
+    {
+      return AmqpDiagnosticsContext{
+          receiverContext.ClientId,
+          receiverContext.PartitionId,
+          componentType,
+          receiverContext.PartitionId,
+          1};
+    }
+    if (componentType == "connection")
+    {
+      return AmqpDiagnosticsContext{
+          receiverContext.ClientId, receiverContext.PartitionId, componentType, {}, 1};
+    }
+    return receiverContext;
   }
 
   std::string FormatAmqpLifecycleEvent(
