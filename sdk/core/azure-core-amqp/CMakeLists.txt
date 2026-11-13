@@ -88,11 +88,24 @@ if (USE_RUST_AMQP)
     if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
       message("Configure rust for Windows x86 builds.")
 
-      # Run the rustup command to install the toolchain
-      execute_process(COMMAND rustup toolchain install stable-i686-pc-windows-msvc --force-non-host)
-
-      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
+      # Rust 1.100 and later provide x86 Windows targets without 32-bit host tools.
+      # Use a 64-bit compiler to build the 32-bit library.
+      set(Rust_TOOLCHAIN "stable-x86_64-pc-windows-msvc")
       set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
+      execute_process(
+        COMMAND rustup toolchain install ${Rust_TOOLCHAIN} --force-non-host
+        RESULT_VARIABLE rust_toolchain_install_result
+      )
+      if (NOT "${rust_toolchain_install_result}" STREQUAL "0")
+        message(FATAL_ERROR "Failed to install Rust toolchain ${Rust_TOOLCHAIN}: ${rust_toolchain_install_result}")
+      endif()
+      execute_process(
+        COMMAND rustup target add ${Rust_CARGO_TARGET} --toolchain ${Rust_TOOLCHAIN}
+        RESULT_VARIABLE rust_target_install_result
+      )
+      if (NOT "${rust_target_install_result}" STREQUAL "0")
+        message(FATAL_ERROR "Failed to install Rust target ${Rust_CARGO_TARGET}: ${rust_target_install_result}")
+      endif()
     else()
       message("Configure rust for Linux x86 builds.")
       execute_process(COMMAND rustup toolchain install stable-i686-unknown-linux-gnu)

@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed Windows x86 builds with Rust 1.100 and later by using a 64-bit Rust host toolchain with the 32-bit Windows target.
+
 ### Other Changes
 
 - uAMQP connection and link failure logs now include the connection container ID or link name. Transitions to an error state use the warning log level.
