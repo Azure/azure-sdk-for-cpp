@@ -67,7 +67,7 @@ steps:
     displayName: clang --version
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake -DCMAKE_CXX_STANDARD=14 ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
     env:
@@ -91,4 +91,3 @@ steps:
         }
       workingDirectory: build
       displayName: cmake build Targets
-

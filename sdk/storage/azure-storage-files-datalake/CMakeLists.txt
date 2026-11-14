@@ -8,8 +8,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-files-datalake LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
@@ -75,6 +73,7 @@ set(
 )
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
+target_compile_features(azure-storage-files-datalake PUBLIC cxx_std_14)
 
 target_compile_definitions(azure-storage-files-datalake PRIVATE _azure_BUILDING_SDK)
 

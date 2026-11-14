@@ -14,8 +14,6 @@ if (NOT VCPKG_TARGET_TRIPLET MATCHES "windows" OR VCPKG_TARGET_TRIPLET MATCHES "
     set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY ON)
 endif()
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include(AzureVersion)
@@ -54,6 +52,7 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
     )
 
     add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
+    target_compile_features(azure-core-tracing-opentelemetry PUBLIC cxx_std_14)
 
     target_include_directories(
       azure-core-tracing-opentelemetry
