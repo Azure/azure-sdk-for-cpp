@@ -5,27 +5,26 @@ parameters:
   PackageName: ''
 
 steps:
-  - script: mkdir build
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}
+  # Keep dependency build paths below the Windows MAX_PATH limit.
+  - script: cmake -E make_directory "$(Build.BinariesDirectory)/${{ parameters.PackageName }}"
     displayName: create working directory for ${{ parameters.PackageName }}
 
   - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    workingDirectory: $(Build.BinariesDirectory)/${{ parameters.PackageName }}
     displayName: ENVs for ${{ parameters.PackageName }}
 
   - script: pwd
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    workingDirectory: $(Build.BinariesDirectory)/${{ parameters.PackageName }}
     displayName: Show current path for ${{ parameters.PackageName }}
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} "$(Build.SourcesDirectory)/${{ parameters.CmakeGeneratePath }}"
+    workingDirectory: $(Build.BinariesDirectory)/${{ parameters.PackageName }}
     displayName: cmake generate for ${{ parameters.PackageName }}
     env:
       VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
   # The calling job will attempt to upload logs on failure. To that end this
   # step should ONLY run on success.
-  - script: rm -rf build
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}
+  - script: cmake -E remove_directory "$(Build.BinariesDirectory)/${{ parameters.PackageName }}"
     displayName: clean build folder for ${{ parameters.PackageName }}
