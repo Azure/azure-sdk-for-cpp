@@ -142,7 +142,7 @@ namespace Azure { namespace Core {
      * @param other The `%RequestFailedException` to be copied.
      */
     RequestFailedException(const RequestFailedException& other)
-        : std::runtime_error(other.Message),
+        : std::runtime_error(other.what()),
           RawResponse(
               other.RawResponse
                   ? std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse)
