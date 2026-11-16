@@ -36,6 +36,7 @@ add_executable (
     properties_cleanup_test.cpp
     reattach_connection_string_test.cpp
     reattach_policy_test.cpp
+    receiver_open_test.cpp
     retry_operation_test.cpp
     round_trip_test.cpp
     test_checkpoint_store.hpp

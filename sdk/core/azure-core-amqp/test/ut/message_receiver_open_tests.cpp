@@ -7,6 +7,7 @@
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/amqp/internal/message_receiver.hpp>
+#include <azure/core/diagnostics/logger.hpp>
 
 #include <azure_uamqp_c/amqp_definitions.h>
 
@@ -14,7 +15,9 @@
 #include <cstdlib>
 #include <functional>
 #include <future>
+#include <mutex>
 #include <thread>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -110,10 +113,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       bool m_reject;
     };
 
-    void OpenWithPeerResponse(bool reject)
+    void OpenWithPeerResponse(bool reject, bool checkFrames = false)
     {
+      std::mutex framesMutex;
+      std::vector<std::string> frames;
+      if (checkFrames)
+      {
+        Diagnostics::Logger::SetLevel(Diagnostics::Logger::Level::Verbose);
+        Diagnostics::Logger::SetListener(
+            [&](Diagnostics::Logger::Level, std::string const& message) {
+              for (auto const* frame : {"ATTACH", "FLOW", "DETACH"})
+              {
+                if (message.find(std::string("-> [") + frame + "]") != std::string::npos)
+                {
+                  std::lock_guard<std::mutex> lock(framesMutex);
+                  frames.emplace_back(frame);
+                }
+              }
+            });
+      }
       {
         MessageTests::AmqpServerMock server;
+        server.EnableTrace(false);
         MessageTests::MockServiceEndpointOptions endpointOptions;
         endpointOptions.EnableTrace = false;
         endpointOptions.ListenerContext = server.GetListenerContext();
@@ -127,6 +148,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         ConnectionOptions connectionOptions;
         connectionOptions.Port = server.GetPort();
+        connectionOptions.EnableTrace = checkFrames;
         Connection connection("localhost", nullptr, connectionOptions);
         auto session = connection.CreateSession();
         MessageReceiverOptions receiverOptions;
@@ -168,8 +190,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             ADD_FAILURE() << "The rejected receiver attachment succeeded.";
             receiver.Close(context);
           }
-          catch (std::runtime_error const& ex)
+          catch (_detail::MessageReceiverOpenException const& ex)
           {
+            EXPECT_EQ(Models::_internal::AmqpErrorCondition::NotAllowed, ex.Error.Condition);
+            EXPECT_EQ("receiver attachment rejected by test peer", ex.Error.Description);
             EXPECT_NE(std::string::npos, std::string(ex.what()).find("rejected by test peer"));
           }
         }
@@ -180,6 +204,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         // A failed Open must be safe to destroy without an explicit Close.
         server.StopListening();
+      }
+      if (checkFrames)
+      {
+        Diagnostics::Logger::SetListener(nullptr);
+        std::lock_guard<std::mutex> lock(framesMutex);
+        for (auto const& frame : frames)
+        {
+          GTEST_LOG_(INFO) << "Outbound frame: " << frame;
+        }
+        EXPECT_EQ((std::vector<std::string>{"ATTACH", "DETACH"}), frames);
       }
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
@@ -240,6 +274,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EXIT(
         {
           OpenWithPeerResponse(true);
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
+  }
+
+  TEST_F(ReceiverOpenDeathTest, RefusedSourceAcknowledgesDetachWithoutReattaching)
+  {
+    EXPECT_EXIT(
+        {
+          OpenWithPeerResponse(true, true);
           std::exit(::testing::Test::HasFailure() ? 1 : 0);
         },
         ::testing::ExitedWithCode(0),

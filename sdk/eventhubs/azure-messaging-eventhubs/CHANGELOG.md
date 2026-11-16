@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Preserved the AMQP condition and non-transient classification for refused initial and replacement receiver attachments, including failures saved after returning partial events.
+
 - Corrected receiver and producer lifecycle diagnostics during recovery. Receiver links retain a unique instance identity, pending receive failures are not reported twice, and peer-detached senders report their discard at the informational level. Receiver attachment spans and success records now wait for the remote handshake on uAMQP.
 
 ### Other Changes

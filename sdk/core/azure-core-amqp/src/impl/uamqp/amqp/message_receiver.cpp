@@ -509,9 +509,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         auto const& error = std::get<0>(*result);
         if (error)
         {
-          throw std::runtime_error(
-              "Message receiver open operation failed: " + error.Condition.ToString()
-              + " description: " + error.Description);
+          throw MessageReceiverOpenException(error);
         }
       }
       catch (...)

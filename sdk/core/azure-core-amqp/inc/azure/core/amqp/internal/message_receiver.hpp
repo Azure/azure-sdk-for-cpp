@@ -16,11 +16,30 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <stdexcept>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class MessageReceiverImpl;
   class MessageReceiverFactory;
+
+  /** @brief A receiver attachment failure that retains the peer's AMQP error. */
+  class MessageReceiverOpenException final : public std::runtime_error {
+  public:
+    /** @brief Construct an attachment failure from the AMQP error.
+     * @param error The error reported during attachment.
+     */
+    explicit MessageReceiverOpenException(Models::_internal::AmqpError const& error)
+        : std::runtime_error(
+              "Message receiver open operation failed: " + error.Condition.ToString()
+              + " description: " + error.Description),
+          Error(error)
+    {
+    }
+
+    /** @brief The condition, description, and information reported by the peer. */
+    Models::_internal::AmqpError Error;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 #if defined(_azure_TESTING_BUILD)
@@ -151,6 +170,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief Opens the message receiver.
      *
+     * @throws Azure::Core::Amqp::_detail::MessageReceiverOpenException if a blocking uAMQP
+     * attachment fails with an AMQP error.
      * @param context The context for cancelling operations.
      */
     void Open(Context const& context = {});

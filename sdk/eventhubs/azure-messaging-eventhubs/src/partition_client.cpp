@@ -203,6 +203,19 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 #endif
 
+    void OpenMessageReceiver(
+        Azure::Core::Amqp::_internal::MessageReceiver& receiver,
+        Azure::Core::Context const& context)
+    {
+      try
+      {
+        receiver.Open(context);
+      }
+      catch (Azure::Core::Amqp::_detail::MessageReceiverOpenException const& ex)
+      {
+        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(ex.Error);
+      }
+    }
   } // namespace
 
   PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
@@ -237,7 +250,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       Azure::Core::Amqp::_internal::MessageReceiver messageReceiver{
           CreateMessageReceiver(session, partitionUrl, receiverName, options)};
-      messageReceiver.Open(amqpTracingContext.Context);
+      OpenMessageReceiver(messageReceiver, amqpTracingContext.Context);
       LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "attached");
 
       return PartitionClient(
@@ -348,7 +361,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           {
             Azure::Core::Amqp::_internal::MessageReceiver receiver{
                 CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
-            receiver.Open(amqpTracingContext.Context);
+            OpenMessageReceiver(receiver, amqpTracingContext.Context);
             m_receiver = std::move(receiver);
           }
           catch (std::exception const& ex)
