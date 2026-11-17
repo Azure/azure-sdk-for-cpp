@@ -28,12 +28,15 @@ add_executable (
     eventhubs_admin_client.cpp
     eventhubs_admin_client.hpp
     eventhubs_test_base.hpp
+    eventhubs_tracing_test.cpp
+    eventhubs_tracing_test_doubles.hpp
     processor_load_balancer_test.cpp
     processor_test.cpp
     producer_client_test.cpp
     properties_cleanup_test.cpp
     reattach_connection_string_test.cpp
     reattach_policy_test.cpp
+    receiver_open_test.cpp
     retry_operation_test.cpp
     round_trip_test.cpp
     test_checkpoint_store.hpp

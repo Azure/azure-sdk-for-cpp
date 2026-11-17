@@ -37,6 +37,7 @@ add_executable(azure-core-amqp-tests
   global_state_tests.cpp
   management_tests.cpp
   message_sender_receiver.cpp
+  message_receiver_open_tests.cpp
   message_source_target.cpp
   operation_timeout_tests.cpp
   mock_amqp_server.hpp

@@ -15,6 +15,8 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
+#include <azure/core/tracing/tracing.hpp>
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class EventHubsPropertiesClient;
@@ -40,6 +42,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Name of the consumer client. */
     std::string Name{};
+
+    /**@brief  The tracer provider used to create distributed tracing spans. When this field is
+     * empty, the client creates no spans.
+     */
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
 
   private:
     // The friend declaration is needed so that ConsumerClient could access CppStandardVersion,
@@ -237,6 +244,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
+
+    /// Correlates this client and its AMQP components across lifecycle logs and spans.
+    std::string m_clientIdentifier;
+
+    /// @brief The factory used to create the distributed tracing spans of this client.
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
     void EnsureConnection(std::string const& partitionId, Azure::Core::Context const& context);
     void EnsureSession(std::string const& partitionId, Azure::Core::Context const& context);

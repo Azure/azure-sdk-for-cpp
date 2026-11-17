@@ -66,6 +66,7 @@ typedef struct LINK_INSTANCE_TAG
     AMQP_VALUE desired_capabilities;
     bool is_underlying_session_begun;
     bool is_closed;
+    bool peer_refused_source;
     unsigned char* received_payload;
     uint32_t received_payload_size;
     delivery_number received_delivery_id;
@@ -353,7 +354,18 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     LogError("Could not retrieve peer_max_message_size from attach frame");
                 }
 
-                if ((link_instance->link_state == LINK_STATE_DETACHED) ||
+                AMQP_VALUE peer_source = NULL;
+                if ((link_instance->role == role_receiver) &&
+                    (link_instance->link_state == LINK_STATE_HALF_ATTACHED_ATTACH_SENT) &&
+                    (attach_get_source(attach_handle, &peer_source) != 0))
+                {
+                    /* AMQP 1.0 section 2.6.3: a null source refuses the receiver link.
+                     * Do not grant credit or report attachment; wait for the peer's DETACH error.
+                     * attach_get_source rejects both an absent source and an AMQP null value. */
+                    link_instance->peer_refused_source = true;
+                    LogError("Peer refused receiver source; waiting for detach.");
+                }
+                else if ((link_instance->link_state == LINK_STATE_DETACHED) ||
                     (link_instance->link_state == LINK_STATE_HALF_ATTACHED_ATTACH_SENT))
                 {
                     if (link_instance->role == role_receiver)
@@ -621,8 +633,9 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
 
             (void)detach_get_closed(detach, &closed);
 
-            /* Received a detach while attached */
-            if (link_instance->link_state == LINK_STATE_ATTACHED)
+            /* A refused source completes the ATTACH exchange without opening the receiver.
+             * Acknowledge its DETACH directly, without sending another ATTACH. */
+            if ((link_instance->link_state == LINK_STATE_ATTACHED) || link_instance->peer_refused_source)
             {
                 /* Respond with ack */
                 if (send_detach(link_instance, closed, NULL) != 0)
@@ -647,6 +660,8 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     LogError("Failed sending detach frame");
                 }
             }
+
+            link_instance->peer_refused_source = false;
 
             if (detach_get_error(detach, &error) != 0)
             {
@@ -773,6 +788,7 @@ LINK_HANDLE link_create(SESSION_HANDLE session, const char* name, role role, AMQ
         result->peer_max_message_size = 0;
         result->is_underlying_session_begun = false;
         result->is_closed = false;
+        result->peer_refused_source = false;
         result->attach_properties = NULL;
         result->desired_capabilities = NULL;
         result->received_payload = NULL;
@@ -864,6 +880,7 @@ LINK_HANDLE link_create_from_endpoint(SESSION_HANDLE session, LINK_ENDPOINT_HAND
         result->peer_max_message_size = 0;
         result->is_underlying_session_begun = false;
         result->is_closed = false;
+        result->peer_refused_source = false;
         result->attach_properties = NULL;
         result->desired_capabilities = NULL;
         result->received_payload = NULL;

@@ -4,10 +4,17 @@
 // cspell: words
 
 #include "eventhubs_test_base.hpp"
+#include "eventhubs_tracing_test_doubles.hpp"
+
+#if ENABLE_UAMQP
+#include "../../../../core/azure-core-amqp/test/ut/cleanup_test_listener.hpp"
+#include "../../../../core/azure-core-amqp/test/ut/mock_amqp_server.hpp"
+#endif
 
 #include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
@@ -16,6 +23,9 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <cstdlib>
+#include <future>
+#include <memory>
 #include <mutex>
 #include <numeric>
 #include <string>
@@ -27,6 +37,112 @@
 // cspell: ignore edboptions
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+
+#if ENABLE_UAMQP
+  namespace {
+    class ProducerDetachEndpoint final
+        : public Azure::Core::Amqp::Tests::MessageTests::MockServiceEndpoint {
+    public:
+      explicit ProducerDetachEndpoint(std::string const& name) : MockServiceEndpoint(name, {}) {}
+
+    private:
+      void MessageReceived(
+          std::string const&,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const&) override
+      {
+      }
+    };
+
+    void DetachedProducerLogsDiscard()
+    {
+      using Logger = Azure::Core::Diagnostics::Logger;
+      std::uint16_t port;
+      {
+        Azure::Core::Amqp::Tests::CleanupTestListener listener;
+        port = listener.GetPort();
+      }
+      std::promise<void> detached;
+      auto detachedFuture = detached.get_future();
+      std::atomic<bool> detachReported{false};
+      std::vector<std::string> discarded;
+      std::mutex logMutex;
+      Logger::SetLevel(Logger::Level::Informational);
+      Logger::SetListener([&](Logger::Level level, std::string const& message) {
+        if (message.find("Message sender link detached. Node: detach-test") != std::string::npos
+            && !detachReported.exchange(true))
+        {
+          detached.set_value();
+        }
+        if (message.find("event='discarded'") != std::string::npos
+            && message.find("component.name='detach-test'") != std::string::npos)
+        {
+          EXPECT_EQ(Logger::Level::Informational, level);
+          std::lock_guard<std::mutex> lock(logMutex);
+          discarded.push_back(message);
+        }
+      });
+      {
+        Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock server(port);
+        auto endpoint = std::make_shared<ProducerDetachEndpoint>(
+            "amqp://localhost:" + std::to_string(port) + "/hub/Partitions/0");
+        server.AddServiceEndpoint(endpoint);
+        server.StartListening();
+        {
+          ProducerClientOptions options;
+          options.Name = "detach-test";
+          options.RetryOptions.MaxRetries = 0;
+          ProducerClient producer(
+              "Endpoint=sb://localhost:" + std::to_string(port)
+                  + "/;SharedAccessKeyName=test;SharedAccessKey=YWJj;UseDevelopmentEmulator=true",
+              "hub",
+              options);
+          EventDataBatchOptions batchOptions;
+          batchOptions.PartitionId = "0";
+          batchOptions.MaxBytes = 65536;
+          auto context = Azure::Core::Context().WithDeadline(
+              std::chrono::system_clock::now() + std::chrono::seconds(10));
+          producer.CreateBatch(batchOptions, context);
+          // Send a real peer DETACH, and wait until the producer has observed it.
+          endpoint->StopProcessing();
+          if (detachedFuture.wait_for(std::chrono::seconds(10)) != std::future_status::ready)
+          {
+            ADD_FAILURE() << "The producer did not observe the peer detach";
+            std::exit(1);
+          }
+          // The next factory call discards the old link before trying to open a replacement.
+          // Cancellation avoids needing a second service-side link for that replacement.
+          Azure::Core::Context cancelled;
+          cancelled.Cancel();
+          EXPECT_ANY_THROW(producer.CreateBatch(batchOptions, cancelled));
+          producer.Close(context);
+        }
+        server.StopListening();
+      }
+      Logger::SetListener(nullptr);
+      GTEST_LOG_(INFO) << "Structured discard records after peer detach: " << discarded.size();
+      ASSERT_EQ(1u, discarded.size());
+      EXPECT_NE(std::string::npos, discarded[0].find("component.generation=1"));
+      EXPECT_NE(std::string::npos, discarded[0].find("partition.id='0'"));
+      EXPECT_NE(std::string::npos, discarded[0].find("detail='The peer detached the link.'"));
+    }
+  } // namespace
+
+  class ProducerDiagnosticsDeathTest : public ::testing::Test {
+  protected:
+    void SetUp() override { ::testing::FLAGS_gtest_death_test_style = "threadsafe"; }
+  };
+
+  TEST_F(ProducerDiagnosticsDeathTest, PeerDetachEmitsStructuredDiscardAtInformationalLevel)
+  {
+    EXPECT_EXIT(
+        {
+          DetachedProducerLogsDiscard();
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
+  }
+#endif
 
   class ProducerClientTest : public EventHubsTestBaseParameterized {
   protected:
@@ -105,6 +221,32 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     // Send using a vector of implicit EventData constructor with a binary buffer.
     client->Send({{12, 13, 14, 15}, {16, 17, 18, 19}});
+  }
+
+  // The send success path needs a live AMQP link. It shows a second span when the convenience
+  // overload starts one span and then calls the batch overload.
+  TEST_P(ProducerClientTest, SendEventSpan_LIVEONLY_)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+
+    Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+    producerOptions.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    producerOptions.ApplicationID
+        = std::string(testing::UnitTest::GetInstance()->current_test_info()->name())
+        + " Application";
+    producerOptions.TracingProvider = provider;
+
+    auto client{CreateProducerClient("", producerOptions)};
+
+    client->Send(Azure::Messaging::EventHubs::Models::EventData{"Single span test message"});
+
+    auto span = FindSpan(provider, "ProducerClient.Send");
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("ProducerClient.Send", span->GetName());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
+
+    auto const& attributes = span->GetAttributes();
+    EXPECT_EQ(attributes.end(), attributes.find("messaging.batch.message_count"));
   }
 
   TEST_P(ProducerClientTest, GetEventHubProperties_LIVEONLY_)

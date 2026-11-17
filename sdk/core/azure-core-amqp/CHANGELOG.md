@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Preserved structured AMQP errors when a blocking uAMQP receiver attachment fails. Refused sources now receive a DETACH acknowledgment without a second ATTACH.
+
+- Fixed Windows x86 builds with Rust 1.100 and later by using a 64-bit Rust host toolchain with the 32-bit Windows target.
+
+- Corrected uAMQP receiver attachment handling so a peer response with no source does not mark the receiver attached. Added an internal option to wait for remote attachment, including cancellation, timeout, and rejection handling.
+
 ### Other Changes
+
+- uAMQP connection and link failure logs now include the connection container ID or link name. Transitions to an error state use the warning log level.
 
 ## 1.0.0-beta.14 (2026-11-06)
 

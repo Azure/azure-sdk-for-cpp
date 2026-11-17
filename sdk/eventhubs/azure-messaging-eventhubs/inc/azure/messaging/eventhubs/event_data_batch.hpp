@@ -55,7 +55,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class EventDataBatch final {
   private:
-    std::mutex m_rwMutex;
+    mutable std::mutex m_rwMutex;
     std::string m_partitionId;
     std::string m_partitionKey;
     Azure::Nullable<std::uint64_t> m_maxBytes;
@@ -141,7 +141,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Gets the number of messages in the batch
      *
      */
-    size_t NumberOfEvents()
+    size_t NumberOfEvents() const
     {
       std::lock_guard<std::mutex> lock(m_rwMutex);
       return m_marshalledMessages.size();
