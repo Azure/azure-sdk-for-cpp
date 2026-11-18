@@ -314,8 +314,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   namespace {
     // A sender open runs ConnectionImpl::AuthenticateAudience and PutTokenForAudience, the same
     // CBS open and cleanup that a token refresh runs. Its deadline ends the CBS open while the
-    // relay holds the service's ATTACH reply, FLOW, and DETACH reply for $cbs-sender.
-    void CancelCbsOpenWhileHeld(Session const& session, HoldingRelay& relay)
+    // relay holds the service's ATTACH reply, FLOW, and DETACH reply for $cbs-sender. The checks
+    // are nonfatal, so that the caller still closes its open senders when one fails.
+    bool CancelCbsOpenWhileHeld(Session const& session, HoldingRelay& relay)
     {
       relay.Hold();
       MessageSender sender{session.CreateMessageSender("late-attach-entity", {}, nullptr)};
@@ -332,8 +333,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         GTEST_LOG_(INFO) << "Sender open failed as expected: " << ex.what();
       }
       EXPECT_TRUE(openFailed) << "The held relay must make the CBS open miss its deadline.";
-      ASSERT_TRUE(WaitForHeldFrames(relay, "DETACH", 1, std::chrono::seconds(5)))
-          << "The service never answered the CBS ATTACH and DETACH frames.";
+      bool const detachHeld = WaitForHeldFrames(relay, "DETACH", 1, std::chrono::seconds(5));
+      bool const lateFramesHeld
+          = detachHeld && relay.HeldFrameCount("ATTACH") >= 1 && relay.HeldFrameCount("FLOW") >= 1;
+      EXPECT_TRUE(lateFramesHeld) << "Late ATTACH, FLOW, and DETACH not held. Held: "
+                                  << relay.HeldPerformatives();
+      return openFailed && lateFramesHeld;
     }
 
     CbsOpenResult OpenCbsAndPutToken(Session const& session, std::string const& audience)
@@ -386,7 +391,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender telemetrySender{session.CreateMessageSender("$cbs", telemetryOptions, nullptr)};
       ASSERT_FALSE(telemetrySender.Open());
 
-      ASSERT_NO_FATAL_FAILURE(CancelCbsOpenWhileHeld(session, relay));
+      bool const lateFramesHeld = CancelCbsOpenWhileHeld(session, relay);
       GTEST_LOG_(INFO) << "Releasing " << relay.HeldBytes()
                        << " held bytes to the client: " << relay.HeldPerformatives();
 
@@ -397,7 +402,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // A NULL test alone leaves an endpoint named $cbs-sender on the session, and it takes the
       // ATTACH reply of the next CBS open.
-      EXPECT_EQ(CbsOpenResult::Ok, OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open"));
+      if (lateFramesHeld)
+      {
+        EXPECT_EQ(
+            CbsOpenResult::Ok, OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open"));
+      }
 
       {
         MessageSenderOptions laterOptions;
@@ -436,25 +445,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender telemetrySender{session.CreateMessageSender("$cbs", telemetryOptions, nullptr)};
       ASSERT_FALSE(telemetrySender.Open());
 
-      ASSERT_NO_FATAL_FAILURE(CancelCbsOpenWhileHeld(session, relay));
-      // Let the mock drop its side of the cancelled link before the next $cbs-sender ATTACH.
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-
-      std::atomic<bool> nextOpenOk{false};
-      std::thread nextCbs([&]() {
-        nextOpenOk
-            = OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open") == CbsOpenResult::Ok;
-      });
-      bool const replyHeld = WaitForHeldFrames(relay, "ATTACH", 2, std::chrono::seconds(5));
-      EXPECT_TRUE(replyHeld) << "The service never answered the next CBS ATTACH.";
-      if (replyHeld)
+      if (CancelCbsOpenWhileHeld(session, relay))
       {
-        EXPECT_TRUE(relay.MoveFirstHeldFrameToEnd("DETACH"));
+        // Let the mock drop its side of the cancelled link before the next $cbs-sender ATTACH.
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        std::atomic<bool> nextOpenOk{false};
+        std::thread nextCbs([&]() {
+          nextOpenOk
+              = OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open") == CbsOpenResult::Ok;
+        });
+        bool const replyHeld = WaitForHeldFrames(relay, "ATTACH", 2, std::chrono::seconds(5));
+        EXPECT_TRUE(replyHeld) << "The service never answered the next CBS ATTACH.";
+        if (replyHeld)
+        {
+          EXPECT_TRUE(relay.MoveFirstHeldFrameToEnd("DETACH"));
+        }
+        GTEST_LOG_(INFO) << "Releasing held frames: " << relay.HeldPerformatives();
+        relay.Release();
+        nextCbs.join();
+        EXPECT_TRUE(nextOpenOk);
       }
-      GTEST_LOG_(INFO) << "Releasing held frames: " << relay.HeldPerformatives();
       relay.Release();
-      nextCbs.join();
-      EXPECT_TRUE(nextOpenOk);
 
       telemetrySender.Close();
     }
