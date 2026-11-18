@@ -22,6 +22,7 @@ typedef struct LINK_ENDPOINT_INSTANCE_TAG
 {
     char* name;
     handle input_handle;
+    bool is_input_handle_mapped;
     handle output_handle;
     ON_ENDPOINT_FRAME_RECEIVED frame_received_callback;
     ON_SESSION_STATE_CHANGED on_session_state_changed;
@@ -395,7 +396,8 @@ static LINK_ENDPOINT_INSTANCE* find_link_endpoint_by_input_handle(SESSION_INSTAN
 
     for (i = 0; i < session->link_endpoint_count; i++)
     {
-        if (session->link_endpoints[i]->input_handle == input_handle)
+        if (session->link_endpoints[i]->is_input_handle_mapped &&
+            (session->link_endpoints[i]->input_handle == input_handle))
         {
             break;
         }
@@ -542,6 +544,7 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                         }
                         else
                         {
+                            new_link_endpoint->is_input_handle_mapped = true;
                             new_link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_ATTACHED;
 
                             if (!session_instance->on_link_attached(session_instance->on_link_attached_callback_context, new_link_endpoint, name, role, source, target, properties))
@@ -573,6 +576,7 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     }
                     else
                     {
+                        link_endpoint->is_input_handle_mapped = true;
                         link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_ATTACHED;
 
                         if (session_instance->on_link_attached != NULL)
@@ -623,6 +627,9 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
                     {
                       link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
+                        /* The peer may reuse its handle for a new link once it has detached.
+                           Unmap it before the callback, which may free the endpoint. */
+                        link_endpoint->is_input_handle_mapped = false;
                         if (link_endpoint->frame_received_callback)
                         {
                             link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
@@ -1211,6 +1218,7 @@ LINK_ENDPOINT_HANDLE session_create_link_endpoint(SESSION_HANDLE session, const 
             result->callback_context = NULL;
             result->output_handle = selected_handle;
             result->input_handle = 0xFFFFFFFF;
+            result->is_input_handle_mapped = false;
             result->link_endpoint_state = LINK_ENDPOINT_STATE_NOT_ATTACHED;
             name_length = strlen(name);
             result->name = (char*)malloc(name_length + 1);
