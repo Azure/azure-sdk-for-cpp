@@ -417,10 +417,25 @@ Host: www.microsoft.com)";
 
   namespace {
     int FakeIoDestroyCount = 0;
+    int FakeIoOpenCount = 0;
+    int FakeIoCloseCount = 0;
+    int FakeIoClosesBeforeDestroy = 0;
     int FakeIoInstance = 0;
 
+    void ResetFakeIo()
+    {
+      FakeIoDestroyCount = 0;
+      FakeIoOpenCount = 0;
+      FakeIoCloseCount = 0;
+      FakeIoClosesBeforeDestroy = 0;
+    }
+
     CONCRETE_IO_HANDLE FakeIoCreate(void*) { return &FakeIoInstance; }
-    void FakeIoDestroy(CONCRETE_IO_HANDLE) { FakeIoDestroyCount += 1; }
+    void FakeIoDestroy(CONCRETE_IO_HANDLE)
+    {
+      FakeIoDestroyCount += 1;
+      FakeIoClosesBeforeDestroy = FakeIoCloseCount;
+    }
     int FakeIoOpen(
         CONCRETE_IO_HANDLE,
         ON_IO_OPEN_COMPLETE,
@@ -430,9 +445,15 @@ Host: www.microsoft.com)";
         ON_IO_ERROR,
         void*)
     {
-      return 1;
+      // The open never completes, so a layer over this IO stays in its opening state.
+      FakeIoOpenCount += 1;
+      return 0;
     }
-    int FakeIoClose(CONCRETE_IO_HANDLE, ON_IO_CLOSE_COMPLETE, void*) { return 1; }
+    int FakeIoClose(CONCRETE_IO_HANDLE, ON_IO_CLOSE_COMPLETE, void*)
+    {
+      FakeIoCloseCount += 1;
+      return 0;
+    }
     int FakeIoSend(CONCRETE_IO_HANDLE, const void*, size_t, ON_SEND_COMPLETE, void*) { return 1; }
     void FakeIoDoWork(CONCRETE_IO_HANDLE) {}
     int FakeIoSetOption(CONCRETE_IO_HANDLE, const char*, const void*) { return 1; }
@@ -447,11 +468,15 @@ Host: www.microsoft.com)";
         FakeIoSend,
         FakeIoDoWork,
         FakeIoSetOption};
+
+    void OnFakeLayerOpen(void*, IO_OPEN_RESULT) {}
+    void OnFakeLayerBytes(void*, const unsigned char*, size_t) {}
+    void OnFakeLayerError(void*) {}
   } // namespace
 
   TEST(TestHeaderDetectTransport, DestroysUnderlyingTransport)
   {
-    FakeIoDestroyCount = 0;
+    ResetFakeIo();
     auto parent = std::make_shared<Transport>(
         std::make_shared<TransportImpl>(xio_create(&FakeIoDescription, nullptr), nullptr));
     {
@@ -465,13 +490,37 @@ Host: www.microsoft.com)";
 
   TEST(TestHeaderDetectTransport, RejectsLayeredParent)
   {
-    FakeIoDestroyCount = 0;
+    ResetFakeIo();
     auto parent = std::make_shared<Transport>(
         std::make_shared<TransportImpl>(xio_create(&FakeIoDescription, nullptr), nullptr));
     auto headerDetect
         = std::make_shared<Transport>(AmqpHeaderDetectTransportFactory::Create(parent, nullptr));
     EXPECT_THROW(AmqpHeaderDetectTransportFactory::Create(headerDetect, nullptr), std::logic_error);
     headerDetect.reset();
+    EXPECT_EQ(1, FakeIoDestroyCount);
+  }
+
+  TEST(TestHeaderDetectTransport, DestroyWhileOpeningClosesUnderlyingFirst)
+  {
+    ResetFakeIo();
+    auto parent = std::make_shared<Transport>(
+        std::make_shared<TransportImpl>(xio_create(&FakeIoDescription, nullptr), nullptr));
+    {
+      Transport headerDetect{AmqpHeaderDetectTransportFactory::Create(parent, nullptr)};
+      ASSERT_EQ(
+          0,
+          xio_open(
+              *headerDetect.GetImpl(),
+              OnFakeLayerOpen,
+              nullptr,
+              OnFakeLayerBytes,
+              nullptr,
+              OnFakeLayerError,
+              nullptr));
+    }
+    EXPECT_EQ(1, FakeIoOpenCount);
+    EXPECT_EQ(1, FakeIoCloseCount);
+    EXPECT_EQ(1, FakeIoClosesBeforeDestroy);
     EXPECT_EQ(1, FakeIoDestroyCount);
   }
 }}}} // namespace Azure::Core::Amqp::Tests

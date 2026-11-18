@@ -85,8 +85,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   private:
     // A layered uAMQP IO does not destroy the IO or the SASL mechanism that it uses, so this
-    // transport owns them too.
-    // Members destroy in reverse order, and the layer can close its underlying IO on destroy.
+    // transport owns them too. Members destroy in reverse order, so the layer goes first:
+    // header_detect_io_destroy can close its underlying IO.
     UniqueSaslMechanismHandle m_saslMechanism{};
     UniqueXioHandle m_underlyingXio{};
     UniqueXioHandle m_xioInstance{};
