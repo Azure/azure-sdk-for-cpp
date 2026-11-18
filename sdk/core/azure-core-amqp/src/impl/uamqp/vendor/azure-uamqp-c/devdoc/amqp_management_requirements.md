@@ -234,6 +234,10 @@ ASYNC_OPERATION_HANDLE amqp_management_execute_operation_async(AMQP_MANAGEMENT_H
 
 **SRS_AMQP_MANAGEMENT_01_089: [** If `messagesender_send_async` fails, `amqp_management_execute_operation_async` shall fail and return NULL. **]**
 
+**SRS_AMQP_MANAGEMENT_01_200: [** If the send failed while `messagesender_send_async` was running, `amqp_management_execute_operation_async` shall fail and return NULL without calling `on_execute_operation_complete`. **]**
+
+**SRS_AMQP_MANAGEMENT_01_201: [** If the send completed while `messagesender_send_async` was running, the handle returned by `messagesender_send_async` shall not be stored. **]**
+
 **SRS_AMQP_MANAGEMENT_01_091: [** Once the request message has been sent, an entry shall be stored in the pending operations list by calling `singlylinkedlist_add`. **]**
 
 **SRS_AMQP_MANAGEMENT_01_092: [** If `singlylinkedlist_add` fails then `amqp_management_execute_operation_async` shall fail and return a non-zero value. **]**
@@ -317,6 +321,8 @@ void on_message_send_complete(void* context, MESSAGE_SEND_RESULT send_result, AM
 **SRS_AMQP_MANAGEMENT_01_167: [** When `on_message_send_complete` is called with a NULL context it shall return. **]**
 
 **SRS_AMQP_MANAGEMENT_01_170: [** If `send_result` is `MESSAGE_SEND_OK`, `on_message_send_complete` shall return. **]**
+
+**SRS_AMQP_MANAGEMENT_01_199: [** If `send_result` is different than `MESSAGE_SEND_OK` while `messagesender_send_async` is still running for the pending operation, `on_message_send_complete` shall only record the failure, leaving it to `amqp_management_execute_operation_async` to fail. **]**
 
 **SRS_AMQP_MANAGEMENT_01_172: [** If `send_result` is different then `MESSAGE_SEND_OK`: **]**
 
