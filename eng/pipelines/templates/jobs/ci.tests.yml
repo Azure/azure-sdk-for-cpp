@@ -55,13 +55,17 @@ parameters:
   - name: DisplayName
     type: string
     default: Validate
+  # The name shown in the pipeline and GitHub checks. Empty means DisplayName.
+  - name: JobDisplayName
+    type: string
+    default: ''
   - name: OSName
     type: string
     default: ''
 
 jobs:
   - job: ${{ parameters.DisplayName }}_${{ parameters.OSName }}
-    displayName: ${{ parameters.DisplayName }}
+    displayName: ${{ coalesce(parameters.JobDisplayName, parameters.DisplayName) }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
     strategy:

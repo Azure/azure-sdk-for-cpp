@@ -101,6 +101,8 @@ jobs:
         Pool: $(LINUXPOOL)
         AdditionalParameters:
           DisplayName: ${{ parameters.JobName }}_uamqp
+          # Puts the backend first in the check name, for example "Build [uAMQP] Validate Ubuntu24_gcc_debug".
+          JobDisplayName: '[uAMQP] ${{ parameters.JobName }}'
           Artifacts: ${{ parameters.Artifacts }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestPipeline: ${{ parameters.TestPipeline }}
