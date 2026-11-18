@@ -30,6 +30,7 @@ typedef struct LINK_ENDPOINT_INSTANCE_TAG
     void* callback_context;
     SESSION_HANDLE session;
     LINK_ENDPOINT_STATE link_endpoint_state;
+    bool is_attach_reply_pending;
     ON_LINK_ENDPOINT_DESTROYED_CALLBACK on_link_endpoint_destroyed_callback;
     void* on_link_endpoint_destroyed_context;
 } LINK_ENDPOINT_INSTANCE;
@@ -367,23 +368,27 @@ static int send_flow(SESSION_INSTANCE* session)
 static LINK_ENDPOINT_INSTANCE* find_link_endpoint_by_name(SESSION_INSTANCE* session, const char* name)
 {
     uint32_t i;
-    LINK_ENDPOINT_INSTANCE* result;
+    LINK_ENDPOINT_INSTANCE* result = NULL;
 
     for (i = 0; i < session->link_endpoint_count; i++)
     {
-        if (strcmp(session->link_endpoints[i]->name, name) == 0)
+        LINK_ENDPOINT_INSTANCE* link_endpoint = session->link_endpoints[i];
+        if (strcmp(link_endpoint->name, name) == 0)
         {
-            break;
-        }
-    }
+            /* The peer answers ATTACH frames in order. A destroyed endpoint that waits for its reply
+               sent its ATTACH before a later link with the same name, so it takes this reply. */
+            if ((link_endpoint->link_endpoint_state == LINK_ENDPOINT_STATE_DETACHING) &&
+                link_endpoint->is_attach_reply_pending)
+            {
+                result = link_endpoint;
+                break;
+            }
 
-    if (i == session->link_endpoint_count)
-    {
-        result = NULL;
-    }
-    else
-    {
-        result = session->link_endpoints[i];
+            if (result == NULL)
+            {
+                result = link_endpoint;
+            }
+        }
     }
 
     return result;
@@ -578,6 +583,7 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                     {
                         link_endpoint->is_input_handle_mapped = true;
                         link_endpoint->link_endpoint_state = LINK_ENDPOINT_STATE_ATTACHED;
+                        link_endpoint->is_attach_reply_pending = false;
 
                         if (session_instance->on_link_attached != NULL)
                         {
@@ -587,7 +593,22 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                             }
                         }
 
-                        link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
+                        if (link_endpoint->frame_received_callback != NULL)
+                        {
+                            link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
+                        }
+                    }
+                }
+                else if (link_endpoint->is_attach_reply_pending)
+                {
+                    if (attach_get_handle(attach_handle, &link_endpoint->input_handle) != 0)
+                    {
+                        end_session_with_error(session_instance, "amqp:decode-error", "Cannot get input handle from ATTACH frame");
+                    }
+                    else
+                    {
+                        link_endpoint->is_input_handle_mapped = true;
+                        link_endpoint->is_attach_reply_pending = false;
                     }
                 }
             }
@@ -696,7 +717,8 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
 
                 if (link_endpoint_instance != NULL)
                 {
-                    if (link_endpoint_instance->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
+                    if ((link_endpoint_instance->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING) &&
+                        (link_endpoint_instance->frame_received_callback != NULL))
                     {
                         link_endpoint_instance->frame_received_callback(link_endpoint_instance->callback_context, performative, payload_size, payload_bytes);
                     }
@@ -752,7 +774,8 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
                 }
                 else
                 {
-                    if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
+                    if ((link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING) &&
+                        (link_endpoint->frame_received_callback != NULL))
                     {
                         link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
                     }
@@ -773,7 +796,8 @@ static void on_frame_received(void* context, AMQP_VALUE performative, uint32_t p
         for (i = 0; i < session_instance->link_endpoint_count; i++)
         {
             LINK_ENDPOINT_INSTANCE* link_endpoint = session_instance->link_endpoints[i];
-            if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
+            if ((link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING) &&
+                (link_endpoint->frame_received_callback != NULL))
             {
                 link_endpoint->frame_received_callback(link_endpoint->callback_context, performative, payload_size, payload_bytes);
             }
@@ -1220,6 +1244,7 @@ LINK_ENDPOINT_HANDLE session_create_link_endpoint(SESSION_HANDLE session, const 
             result->input_handle = 0xFFFFFFFF;
             result->is_input_handle_mapped = false;
             result->link_endpoint_state = LINK_ENDPOINT_STATE_NOT_ATTACHED;
+            result->is_attach_reply_pending = false;
             name_length = strlen(name);
             result->name = (char*)malloc(name_length + 1);
             result->on_link_endpoint_destroyed_callback = NULL;
@@ -1281,9 +1306,16 @@ void session_destroy_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
     {
         LINK_ENDPOINT_INSTANCE* endpoint_instance = (LINK_ENDPOINT_INSTANCE*)link_endpoint;
 
-        if (endpoint_instance->link_endpoint_state == LINK_ENDPOINT_STATE_ATTACHED)
+        /* The peer still answers an ATTACH that it got. Keep the endpoint until the peer's DETACH,
+           and clear the callbacks because the owner frees their context after this call. */
+        if ((endpoint_instance->link_endpoint_state == LINK_ENDPOINT_STATE_ATTACHED) ||
+            endpoint_instance->is_attach_reply_pending)
         {
             endpoint_instance->link_endpoint_state = LINK_ENDPOINT_STATE_DETACHING;
+            endpoint_instance->frame_received_callback = NULL;
+            endpoint_instance->on_session_state_changed = NULL;
+            endpoint_instance->on_session_flow_on = NULL;
+            endpoint_instance->callback_context = NULL;
         }
         else
         {
@@ -1441,6 +1473,12 @@ int session_send_attach(LINK_ENDPOINT_HANDLE link_endpoint, ATTACH_HANDLE attach
                 }
                 else
                 {
+                    if ((link_endpoint_instance->link_endpoint_state == LINK_ENDPOINT_STATE_NOT_ATTACHED) &&
+                        !link_endpoint_instance->is_input_handle_mapped)
+                    {
+                        link_endpoint_instance->is_attach_reply_pending = true;
+                    }
+
                     result = 0;
                 }
 

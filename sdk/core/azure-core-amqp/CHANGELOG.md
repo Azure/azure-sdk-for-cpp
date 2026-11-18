@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed a uAMQP access violation when a socket write fails during a multi-frame message send. The send now completes with an error. A close or session end that cannot send its frame on a broken connection now reports a failure. [[#7549]](https://github.com/Azure/azure-sdk-for-cpp/issues/7549)
+- Fixed a uAMQP access violation on the connection polling thread when a CBS open ends before the service answers its ATTACH. The session now keeps the destroyed link endpoint until the service detaches it, and drops the late frames for that link. [[#7557]](https://github.com/Azure/azure-sdk-for-cpp/issues/7557)
 
 ### Other Changes
 
