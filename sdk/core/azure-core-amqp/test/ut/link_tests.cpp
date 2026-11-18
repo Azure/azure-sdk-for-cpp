@@ -117,6 +117,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
   }
+
+  TEST_F(TestLinks, LinkDesiredCapabilitiesReplaced)
+  {
+    Connection connection("localhost", nullptr, {});
+    Session session{connection.CreateSession()};
+
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+    link.SetDesiredCapabilities("FirstCapability");
+    link.SetDesiredCapabilities("SecondCapability");
+    EXPECT_EQ(Models::AmqpValue{"SecondCapability"}, link.GetDesiredCapabilities());
+  }
+
+  TEST_F(TestLinks, LinkAttachPropertiesReplaced)
+  {
+    Connection connection("localhost", nullptr, {});
+    Session session{connection.CreateSession()};
+
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+    link.SetAttachProperties(Models::AmqpMap{{"first", "value1"}}.AsAmqpValue());
+    link.SetAttachProperties(Models::AmqpMap{{"second", "value2"}}.AsAmqpValue());
+  }
+
   class LinkSocketListenerEvents
       : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
         public Azure::Core::Amqp::_internal::ConnectionEvents,
