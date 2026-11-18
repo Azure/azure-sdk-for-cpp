@@ -16,6 +16,7 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 
+#include <atomic>
 #include <memory>
 
 #include <gtest/gtest.h>
@@ -57,8 +58,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -185,6 +186,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             sender.second->Close();
           }
         }
+        // Release link ownership before destroying sessions whose End can fail.
+        m_receiver.clear();
+        m_sender.clear();
       }
 
     protected:
@@ -625,6 +629,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void StopListening()
       {
+        if (!m_listening)
+        {
+          return;
+        }
+        // A destructor must not retry a partially completed shutdown.
+        m_listening = false;
         GTEST_LOG_(INFO) << "Stop listening";
         // Cancel the listener context, which will cause any WaitForXxx calls to exit.
 
@@ -643,17 +653,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           for (const auto& session : m_sessions)
           {
-            session->End({});
+            try
+            {
+              session->End({});
+            }
+            catch (std::runtime_error const& ex)
+            {
+              if (m_peerClosed.load() && std::string(ex.what()) == "Could not end session")
+              {
+                GTEST_LOG_(INFO) << "Session End after the mock peer closed reported: "
+                                 << ex.what();
+              }
+              else
+              {
+                ADD_FAILURE() << "Unexpected mock session shutdown failure: " << ex.what();
+              }
+            }
           }
-          // Note: clearing the sessions list destroys the session and calls session_end always, so
-          // it does not need to be called here.
+          // A failed End still needs native destruction to release its polling reference.
           m_sessions.clear();
         }
         for (const auto& connection : m_connections)
         {
           connection->Close({});
         }
-        m_listening = false;
+        m_connections.clear();
       }
 
       // Closes the connections without closing the links on them first, which is the shape of a
@@ -721,6 +745,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
             || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
         {
+          m_peerClosed = true;
           // If the connection is closed, then we should close the connection.
           m_listenerContext.Cancel();
         }
@@ -796,6 +821,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       bool m_enableTrace{true};
       bool m_listening{false};
+      std::atomic<bool> m_peerClosed{false};
 
       std::string m_connectionId;
       std::thread m_serverThread;
