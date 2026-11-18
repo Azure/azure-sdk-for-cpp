@@ -976,7 +976,6 @@ int amqpvalue_get_decimal32(AMQP_VALUE value, uint8_t* decimal32_value)
   return result;
 }
 
-/* Codes_SRS_AMQPVALUE_01_024: [1.6.16 char A single Unicode character.] *
 /* Codes_SRS_AMQPVALUE_01_024: [1.6.16 char A single Unicode character.] */
 AMQP_VALUE amqpvalue_create_char(uint32_t value)
 {
