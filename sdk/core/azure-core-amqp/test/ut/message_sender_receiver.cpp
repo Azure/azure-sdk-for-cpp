@@ -14,6 +14,11 @@
 #include "azure/core/amqp/internal/session.hpp"
 
 #if ENABLE_UAMQP
+#include "../../src/impl/uamqp/network/private/transport_impl.hpp"
+
+#include <azure_c_shared_utility/socketio.h>
+#include <azure_c_shared_utility/xio.h>
+
 #undef USE_NATIVE_BROKER
 #elif ENABLE_RUST_AMQP
 #define USE_NATIVE_BROKER
@@ -27,6 +32,7 @@
 #include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <exception>
 #include <functional>
@@ -1114,6 +1120,104 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     StopServerListening();
     EXPECT_NO_THROW(EndAmqpSession(session));
     EXPECT_NO_THROW(CloseAmqpConnection(connection));
+  }
+
+  namespace {
+    // A socket IO that fails every large send once armed. Only transfer frames are large, so the
+    // connection still sends its small frames (flow, empty) until the test sends a message.
+    struct FailingSocketIo final
+    {
+      static std::atomic<bool> Armed;
+      static std::atomic<int> FailedSends;
+
+      static int Send(
+          CONCRETE_IO_HANDLE io,
+          const void* buffer,
+          size_t size,
+          ON_SEND_COMPLETE onSendComplete,
+          void* callbackContext)
+      {
+        if (Armed && size >= 1024)
+        {
+          ++FailedSends;
+          return 1;
+        }
+        return socketio_get_interface_description()->concrete_io_send(
+            io, buffer, size, onSendComplete, callbackContext);
+      }
+
+      static IO_INTERFACE_DESCRIPTION const* Get()
+      {
+        static IO_INTERFACE_DESCRIPTION const description = [] {
+          IO_INTERFACE_DESCRIPTION result = *socketio_get_interface_description();
+          result.concrete_io_send = Send;
+          return result;
+        }();
+        return &description;
+      }
+    };
+    std::atomic<bool> FailingSocketIo::Armed{false};
+    std::atomic<int> FailingSocketIo::FailedSends{0};
+  } // namespace
+
+  // When a write fails, uAMQP ends the connection, and the link settles the delivery that is being
+  // sent. The next frame of the same transfer then fails, and the sender used to remove the
+  // already removed send from its now empty queue, which read memory at index SIZE_MAX (#7549).
+  TEST_F(TestMessageSendReceive, SenderReportsAFailedWriteInAMultiFrameTransfer)
+  {
+    // The service session cannot end once its peer is gone, so it keeps polling until the mock is
+    // destroyed. A mock local to the test is destroyed before TearDown checks for idle.
+    MessageTests::AmqpServerMock mockServer;
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServer.AddServiceEndpoint(
+        std::make_shared<QuietSenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions));
+    mockServer.SetMaxFrameSize(4096);
+
+    FailingSocketIo::Armed = false;
+    FailingSocketIo::FailedSends = 0;
+    std::string const hostName{"localhost"};
+    SOCKETIO_CONFIG socketConfig{hostName.c_str(), mockServer.GetPort(), nullptr};
+    Network::_internal::Transport transport{Network::_detail::TransportImpl::CreateFromXioHandle(
+        xio_create(FailingSocketIo::Get(), &socketConfig), nullptr)};
+
+    ConnectionOptions connectionOptions;
+    connectionOptions.ContainerId = "failing-write";
+    Connection connection(transport, connectionOptions, nullptr, nullptr);
+    auto session{CreateAmqpSession(connection)};
+
+    mockServer.StartListening();
+
+    {
+      MessageSenderOptions options;
+      options.SettleMode = SenderSettleMode::Settled;
+      options.MessageSource = "ingress";
+      options.Name = "sender-link";
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
+      EXPECT_FALSE(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(
+          Azure::Core::Amqp::Models::AmqpBinaryData(std::vector<uint8_t>(16 * 1024, 'x')));
+
+      FailingSocketIo::Armed = true;
+      auto result = sender.Send(message);
+      FailingSocketIo::Armed = false;
+
+      EXPECT_EQ(1, FailingSocketIo::FailedSends.load())
+          << "Only the first transfer frame reaches the socket, because the connection ends there.";
+      EXPECT_EQ(std::get<0>(result), MessageSendStatus::Error);
+
+      try
+      {
+        sender.Close();
+      }
+      catch (std::exception const& ex)
+      {
+        GTEST_LOG_(INFO) << "Close of a sender on an ended connection reported: " << ex.what();
+      }
+    }
+
+    mockServer.StopListening();
   }
 #endif // !defined(USE_NATIVE_BROKER)
 #endif // ENABLE_UAMQP
