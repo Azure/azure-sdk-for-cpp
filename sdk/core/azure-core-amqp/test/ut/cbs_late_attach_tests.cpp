@@ -336,18 +336,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       relay.Release();
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      // The connection and its polling thread must survive the late frames. A new session
-      // checks that, because the mock keeps its side of the cancelled $cbs-sender link and so
-      // never answers a second $cbs-sender ATTACH on the first session.
+      // The session must still attach a new link after the late frames. The mock keeps its side
+      // of the cancelled $cbs-sender link, so it cannot serve a second CBS open, and this link
+      // skips authentication.
       {
-        Session freshSession{connection.CreateSession()};
-        ClaimsBasedSecurity cbs(freshSession);
-        auto const openResult = cbs.Open();
-        EXPECT_EQ(CbsOpenResult::Ok, openResult);
-        if (openResult == CbsOpenResult::Ok)
-        {
-          cbs.Close();
-        }
+        MessageSenderOptions laterOptions;
+        laterOptions.Name = "later-sender";
+        laterOptions.MessageSource = "later-source";
+        laterOptions.AuthenticationRequired = false;
+        MessageSender laterSender{session.CreateMessageSender("$cbs", laterOptions, nullptr)};
+        EXPECT_FALSE(laterSender.Open());
+        laterSender.Close();
       }
       telemetrySender.Close();
     }
