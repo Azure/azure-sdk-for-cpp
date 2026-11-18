@@ -8,6 +8,7 @@
 #include "azure/core/amqp/internal/network/transport.hpp"
 
 #include <azure_c_shared_utility/xio.h>
+#include <azure_uamqp_c/sasl_mechanism.h>
 
 #include <exception>
 #include <functional>
@@ -22,10 +23,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using type = Core::_internal::BasicUniqueHandle<XIO_INSTANCE_TAG, FreeXio>;
   };
+
+  template <> struct UniqueHandleHelper<SASL_MECHANISM_INSTANCE_TAG>
+  {
+    static void FreeSaslMechanism(SASL_MECHANISM_HANDLE obj);
+
+    using type = Core::_internal::BasicUniqueHandle<SASL_MECHANISM_INSTANCE_TAG, FreeSaslMechanism>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
   using UniqueXioHandle = Amqp::_detail::UniqueHandle<XIO_INSTANCE_TAG>;
+  using UniqueSaslMechanismHandle = Amqp::_detail::UniqueHandle<SASL_MECHANISM_INSTANCE_TAG>;
 
   struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
   {
@@ -48,6 +57,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     {
       m_underlyingXio = std::move(underlyingXio);
     }
+    void AdoptSaslMechanism(UniqueSaslMechanismHandle saslMechanism)
+    {
+      m_saslMechanism = std::move(saslMechanism);
+    }
     void SetEventHandler(Network::_internal::TransportEvents* eventHandler)
     {
       m_eventHandler = eventHandler;
@@ -62,8 +75,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
 
   private:
-    // A layered uAMQP IO does not destroy the IO under it, so this transport owns that IO too.
+    // A layered uAMQP IO does not destroy the IO or the SASL mechanism that it uses, so this
+    // transport owns them too.
     // Members destroy in reverse order, and the layer can close its underlying IO on destroy.
+    UniqueSaslMechanismHandle m_saslMechanism{};
     UniqueXioHandle m_underlyingXio{};
     UniqueXioHandle m_xioInstance{};
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::TransportOpenStatus>
