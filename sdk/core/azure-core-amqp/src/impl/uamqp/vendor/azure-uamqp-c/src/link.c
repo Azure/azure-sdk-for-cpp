@@ -1192,6 +1192,8 @@ int link_set_desired_capabilities(LINK_HANDLE link, AMQP_VALUE desired_capabilit
     }
     else
     {
+        // Clone before the release. The caller can pass the handle that the link holds,
+        // and amqpvalue_clone only adds a reference to it.
         AMQP_VALUE new_desired_capabilities = amqpvalue_clone(desired_capabilities);
         if (new_desired_capabilities == NULL)
         {
@@ -1224,6 +1226,8 @@ int link_set_attach_properties(LINK_HANDLE link, fields attach_properties)
     }
     else
     {
+        // Clone before the release. The caller can pass the handle that the link holds,
+        // and amqpvalue_clone only adds a reference to it.
         fields new_attach_properties = amqpvalue_clone(attach_properties);
         if (new_attach_properties == NULL)
         {
