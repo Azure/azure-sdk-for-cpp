@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../../src/impl/uamqp/network/private/transport_impl.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 
 #include <azure/core/amqp/internal/common/async_operation_queue.hpp>
+#include <azure/core/amqp/internal/network/amqp_header_detect_transport.hpp>
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/network/socket_transport.hpp>
 #include <azure/core/amqp/internal/network/tls_transport.hpp>
@@ -412,4 +414,52 @@ Host: www.microsoft.com)";
     listener.Stop();
   }
 #endif // !defined(AZ_PLATFORM_MAC)
+
+  namespace {
+    int FakeIoDestroyCount = 0;
+    int FakeIoInstance = 0;
+
+    CONCRETE_IO_HANDLE FakeIoCreate(void*) { return &FakeIoInstance; }
+    void FakeIoDestroy(CONCRETE_IO_HANDLE) { FakeIoDestroyCount += 1; }
+    int FakeIoOpen(
+        CONCRETE_IO_HANDLE,
+        ON_IO_OPEN_COMPLETE,
+        void*,
+        ON_BYTES_RECEIVED,
+        void*,
+        ON_IO_ERROR,
+        void*)
+    {
+      return 1;
+    }
+    int FakeIoClose(CONCRETE_IO_HANDLE, ON_IO_CLOSE_COMPLETE, void*) { return 1; }
+    int FakeIoSend(CONCRETE_IO_HANDLE, const void*, size_t, ON_SEND_COMPLETE, void*) { return 1; }
+    void FakeIoDoWork(CONCRETE_IO_HANDLE) {}
+    int FakeIoSetOption(CONCRETE_IO_HANDLE, const char*, const void*) { return 1; }
+    OPTIONHANDLER_HANDLE FakeIoRetrieveOptions(CONCRETE_IO_HANDLE) { return nullptr; }
+
+    const IO_INTERFACE_DESCRIPTION FakeIoDescription{
+        FakeIoRetrieveOptions,
+        FakeIoCreate,
+        FakeIoDestroy,
+        FakeIoOpen,
+        FakeIoClose,
+        FakeIoSend,
+        FakeIoDoWork,
+        FakeIoSetOption};
+  } // namespace
+
+  TEST(TestHeaderDetectTransport, DestroysUnderlyingTransport)
+  {
+    FakeIoDestroyCount = 0;
+    auto parent = std::make_shared<Transport>(
+        std::make_shared<TransportImpl>(xio_create(&FakeIoDescription, nullptr), nullptr));
+    {
+      Transport headerDetect{AmqpHeaderDetectTransportFactory::Create(parent, nullptr)};
+      EXPECT_EQ(0, FakeIoDestroyCount);
+    }
+    EXPECT_EQ(1, FakeIoDestroyCount);
+    parent.reset();
+    EXPECT_EQ(1, FakeIoDestroyCount);
+  }
 }}}} // namespace Azure::Core::Amqp::Tests

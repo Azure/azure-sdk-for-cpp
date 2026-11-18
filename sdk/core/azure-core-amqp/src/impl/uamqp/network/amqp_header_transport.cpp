@@ -13,6 +13,7 @@
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _internal {
 
@@ -25,11 +26,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         //        {header_detect_io_get_sasl_amqp_header(), nullptr},
         {header_detect_io_get_amqp_header(), nullptr},
     };
-    detectIoConfig.underlying_io = parentTransport->GetImpl()->Release();
+    _detail::UniqueXioHandle underlyingXio{parentTransport->GetImpl()->Release()};
+    detectIoConfig.underlying_io = underlyingXio.get();
     detectIoConfig.header_detect_entry_count = std::extent<decltype(headerDetectEntries)>::value;
     detectIoConfig.header_detect_entries = headerDetectEntries;
-    return _detail::TransportImpl::CreateFromXioHandle(
+    auto transport = _detail::TransportImpl::CreateFromXioHandle(
         xio_create(header_detect_io_get_interface_description(), &detectIoConfig), eventHandler);
+    transport->AdoptUnderlyingXio(std::move(underlyingXio));
+    return transport;
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal

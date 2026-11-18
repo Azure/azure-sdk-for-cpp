@@ -5,6 +5,7 @@
 
 #include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
+#include "azure/core/amqp/internal/network/transport.hpp"
 
 #include <azure_c_shared_utility/xio.h>
 
@@ -12,6 +13,7 @@
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<XIO_INSTANCE_TAG>
@@ -42,6 +44,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     void Poll() const;
     operator XIO_HANDLE() { return m_xioInstance.get(); }
     XIO_HANDLE Release() { return m_xioInstance.release(); }
+    void AdoptUnderlyingXio(UniqueXioHandle underlyingXio)
+    {
+      m_underlyingXio = std::move(underlyingXio);
+    }
     void SetEventHandler(Network::_internal::TransportEvents* eventHandler)
     {
       m_eventHandler = eventHandler;
@@ -56,6 +62,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
 
   private:
+    // A layered uAMQP IO does not destroy the IO under it, so this transport owns that IO too.
+    // Members destroy in reverse order, and the layer can close its underlying IO on destroy.
+    UniqueXioHandle m_underlyingXio{};
     UniqueXioHandle m_xioInstance{};
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::TransportOpenStatus>
         m_openCompleteQueue;
