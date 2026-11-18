@@ -368,30 +368,36 @@ static int send_flow(SESSION_INSTANCE* session)
 static LINK_ENDPOINT_INSTANCE* find_link_endpoint_by_name(SESSION_INSTANCE* session, const char* name)
 {
     uint32_t i;
-    LINK_ENDPOINT_INSTANCE* result = NULL;
+    LINK_ENDPOINT_INSTANCE* live = NULL;
+    LINK_ENDPOINT_INSTANCE* detaching = NULL;
 
     for (i = 0; i < session->link_endpoint_count; i++)
     {
         LINK_ENDPOINT_INSTANCE* link_endpoint = session->link_endpoints[i];
         if (strcmp(link_endpoint->name, name) == 0)
         {
-            /* The peer answers ATTACH frames in order. A destroyed endpoint that waits for its reply
-               sent its ATTACH before a later link with the same name, so it takes this reply. */
-            if ((link_endpoint->link_endpoint_state == LINK_ENDPOINT_STATE_DETACHING) &&
-                link_endpoint->is_attach_reply_pending)
+            /* A reply gives only the link name. A destroyed endpoint that waits for a reply sent its
+               ATTACH before a live link with this name, so it takes the reply. Another detaching
+               endpoint must not take the reply for a live link. */
+            if (link_endpoint->link_endpoint_state != LINK_ENDPOINT_STATE_DETACHING)
             {
-                result = link_endpoint;
-                break;
+                if (live == NULL)
+                {
+                    live = link_endpoint;
+                }
             }
-
-            if (result == NULL)
+            else if (link_endpoint->is_attach_reply_pending)
             {
-                result = link_endpoint;
+                return link_endpoint;
+            }
+            else if (detaching == NULL)
+            {
+                detaching = link_endpoint;
             }
         }
     }
 
-    return result;
+    return (live != NULL) ? live : detaching;
 }
 
 static LINK_ENDPOINT_INSTANCE* find_link_endpoint_by_input_handle(SESSION_INSTANCE* session, handle input_handle)
