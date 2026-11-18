@@ -462,4 +462,16 @@ Host: www.microsoft.com)";
     parent.reset();
     EXPECT_EQ(1, FakeIoDestroyCount);
   }
+
+  TEST(TestHeaderDetectTransport, RejectsLayeredParent)
+  {
+    FakeIoDestroyCount = 0;
+    auto parent = std::make_shared<Transport>(
+        std::make_shared<TransportImpl>(xio_create(&FakeIoDescription, nullptr), nullptr));
+    auto headerDetect
+        = std::make_shared<Transport>(AmqpHeaderDetectTransportFactory::Create(parent, nullptr));
+    EXPECT_THROW(AmqpHeaderDetectTransportFactory::Create(headerDetect, nullptr), std::logic_error);
+    headerDetect.reset();
+    EXPECT_EQ(1, FakeIoDestroyCount);
+  }
 }}}} // namespace Azure::Core::Amqp::Tests

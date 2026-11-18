@@ -52,7 +52,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         const;
     void Poll() const;
     operator XIO_HANDLE() { return m_xioInstance.get(); }
-    XIO_HANDLE Release() { return m_xioInstance.release(); }
+    XIO_HANDLE Release()
+    {
+      // The new owner would also need the IOs under this layer. No caller nests layers, so
+      // refuse here instead of moving a chain of underlying IOs.
+      if (m_underlyingXio || m_saslMechanism)
+      {
+        throw std::logic_error("Cannot release a layered transport.");
+      }
+      return m_xioInstance.release();
+    }
     void AdoptUnderlyingXio(UniqueXioHandle underlyingXio)
     {
       m_underlyingXio = std::move(underlyingXio);
