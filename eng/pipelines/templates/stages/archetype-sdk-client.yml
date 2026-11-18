@@ -85,6 +85,10 @@ parameters:
   - name: UseFederatedAuth
     type: boolean
     default: true
+  # Passed to the Build stage only, so the PrePublishBuild quick check stays fast.
+  - name: UamqpMatrixFile
+    type: string
+    default: ''
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -176,6 +180,7 @@ extends:
             # Code coverage is enabled by default for live tests
             parameters:
               MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
+              UamqpMatrixFile: ${{ parameters.UamqpMatrixFile }}
               JobName: Validate
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PublishToVcpkgPartnerFeed: ${{ parameters.PublishToVcpkgPartnerFeed }}
