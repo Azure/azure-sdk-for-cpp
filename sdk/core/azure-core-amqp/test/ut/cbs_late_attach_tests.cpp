@@ -149,6 +149,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         return names;
       }
 
+      std::size_t HeldFrameCount(std::string const& performative)
+      {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        std::size_t count = 0;
+        for (auto const& frame : SplitFrames(m_held))
+        {
+          count += (frame.Performative == performative) ? 1 : 0;
+        }
+        return count;
+      }
+
+      bool MoveFirstHeldFrameToEnd(std::string const& performative)
+      {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        for (auto const& frame : SplitFrames(m_held))
+        {
+          if (frame.Performative == performative)
+          {
+            auto const begin = m_held.begin() + static_cast<std::ptrdiff_t>(frame.Offset);
+            std::vector<char> moved(begin, begin + static_cast<std::ptrdiff_t>(frame.Size));
+            m_held.erase(begin, begin + static_cast<std::ptrdiff_t>(frame.Size));
+            m_held.insert(m_held.end(), moved.begin(), moved.end());
+            return true;
+          }
+        }
+        return false;
+      }
+
     private:
       static bool SendAll(int fd, char const* data, std::size_t size)
       {
@@ -261,12 +289,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     };
 
-    bool WaitForHeldBytes(HoldingRelay& relay, std::chrono::milliseconds timeout)
+    bool WaitForHeldFrames(
+        HoldingRelay& relay,
+        std::string const& performative,
+        std::size_t count,
+        std::chrono::milliseconds timeout)
     {
       auto const deadline = std::chrono::steady_clock::now() + timeout;
       while (std::chrono::steady_clock::now() < deadline)
       {
-        if (relay.HeldBytes() > 0)
+        if (relay.HeldFrameCount(performative) >= count)
         {
           return true;
         }
@@ -278,6 +310,52 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   using namespace Azure::Core::Amqp::_internal;
   using namespace Azure::Core::Amqp::_detail;
+
+  namespace {
+    // A sender open runs ConnectionImpl::AuthenticateAudience and PutTokenForAudience, the same
+    // CBS open and cleanup that a token refresh runs. Its deadline ends the CBS open while the
+    // relay holds the service's ATTACH reply, FLOW, and DETACH reply for $cbs-sender.
+    void CancelCbsOpenWhileHeld(Session const& session, HoldingRelay& relay)
+    {
+      relay.Hold();
+      MessageSender sender{session.CreateMessageSender("late-attach-entity", {}, nullptr)};
+      Azure::Core::Context openContext{Azure::Core::Context{}.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(3))};
+      bool openFailed = false;
+      try
+      {
+        openFailed = static_cast<bool>(sender.Open(openContext));
+      }
+      catch (std::exception const& ex)
+      {
+        openFailed = true;
+        GTEST_LOG_(INFO) << "Sender open failed as expected: " << ex.what();
+      }
+      EXPECT_TRUE(openFailed) << "The held relay must make the CBS open miss its deadline.";
+      ASSERT_TRUE(WaitForHeldFrames(relay, "DETACH", 1, std::chrono::seconds(5)))
+          << "The service never answered the CBS ATTACH and DETACH frames.";
+    }
+
+    CbsOpenResult OpenCbsAndPutToken(Session const& session, std::string const& audience)
+    {
+      Azure::Core::Context context{Azure::Core::Context{}.WithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(10))};
+      ClaimsBasedSecurity cbs(session);
+      auto const openResult = cbs.Open(context);
+      if (openResult == CbsOpenResult::Ok)
+      {
+        auto const putResult = cbs.PutToken(
+            CbsTokenType::Jwt,
+            audience,
+            "static-test-token",
+            Azure::DateTime::clock::now() + std::chrono::seconds(90),
+            context);
+        EXPECT_EQ(CbsOperationResult::Ok, std::get<0>(putResult));
+        cbs.Close(context);
+      }
+      return openResult;
+    }
+  } // namespace
 
   // The production path: a sender open authenticates its audience through
   // ConnectionImpl::AuthenticateAudience and PutTokenForAudience, the same CBS open and cleanup
@@ -308,26 +386,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender telemetrySender{session.CreateMessageSender("$cbs", telemetryOptions, nullptr)};
       ASSERT_FALSE(telemetrySender.Open());
 
-      relay.Hold();
-      {
-        MessageSender sender{session.CreateMessageSender("late-attach-entity", {}, nullptr)};
-        Azure::Core::Context openContext{Azure::Core::Context{}.WithDeadline(
-            std::chrono::system_clock::now() + std::chrono::seconds(3))};
-        bool openFailed = false;
-        try
-        {
-          auto const openError = sender.Open(openContext);
-          openFailed = static_cast<bool>(openError);
-        }
-        catch (std::exception const& ex)
-        {
-          openFailed = true;
-          GTEST_LOG_(INFO) << "Sender open failed as expected: " << ex.what();
-        }
-        EXPECT_TRUE(openFailed) << "The held relay must make the CBS open miss its deadline.";
-      }
-      ASSERT_TRUE(WaitForHeldBytes(relay, std::chrono::seconds(5)))
-          << "The service never answered the CBS ATTACH frames.";
+      ASSERT_NO_FATAL_FAILURE(CancelCbsOpenWhileHeld(session, relay));
       GTEST_LOG_(INFO) << "Releasing " << relay.HeldBytes()
                        << " held bytes to the client: " << relay.HeldPerformatives();
 
@@ -336,9 +395,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       relay.Release();
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      // The session must still attach a new link after the late frames. The mock keeps its side
-      // of the cancelled $cbs-sender link, so it cannot serve a second CBS open, and this link
-      // skips authentication.
+      // A NULL test alone leaves an endpoint named $cbs-sender on the session, and it takes the
+      // ATTACH reply of the next CBS open.
+      EXPECT_EQ(CbsOpenResult::Ok, OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open"));
+
       {
         MessageSenderOptions laterOptions;
         laterOptions.Name = "later-sender";
@@ -348,6 +408,54 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         EXPECT_FALSE(laterSender.Open());
         laterSender.Close();
       }
+      telemetrySender.Close();
+    }
+    mockServer.StopListening();
+  }
+
+  // The next CBS open on the session gets its ATTACH reply before the service's DETACH for the
+  // cancelled $cbs-sender link. The kept endpoint has its late ATTACH and waits for that DETACH,
+  // so it must not take the reply for the live link.
+  TEST(TestCbsLateAttach, NextCbsOpenReplyBeforeDetachOfCancelledLink)
+  {
+    MessageTests::AmqpServerMock mockServer;
+    mockServer.StartListening();
+    HoldingRelay relay(mockServer.GetPort());
+
+    {
+      ConnectionOptions options;
+      options.ContainerId = "cbs-late-attach-order";
+      options.EnableTrace = true;
+      options.Port = relay.GetPort();
+      Connection connection("localhost", std::make_shared<StaticTokenCredential>(), options);
+      Session session{connection.CreateSession()};
+
+      MessageSenderOptions telemetryOptions;
+      telemetryOptions.Name = "telemetry-sender";
+      telemetryOptions.MessageSource = "telemetry-source";
+      MessageSender telemetrySender{session.CreateMessageSender("$cbs", telemetryOptions, nullptr)};
+      ASSERT_FALSE(telemetrySender.Open());
+
+      ASSERT_NO_FATAL_FAILURE(CancelCbsOpenWhileHeld(session, relay));
+      // Let the mock drop its side of the cancelled link before the next $cbs-sender ATTACH.
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+
+      std::atomic<bool> nextOpenOk{false};
+      std::thread nextCbs([&]() {
+        nextOpenOk
+            = OpenCbsAndPutToken(session, "amqps://localhost/next-cbs-open") == CbsOpenResult::Ok;
+      });
+      bool const replyHeld = WaitForHeldFrames(relay, "ATTACH", 2, std::chrono::seconds(5));
+      EXPECT_TRUE(replyHeld) << "The service never answered the next CBS ATTACH.";
+      if (replyHeld)
+      {
+        EXPECT_TRUE(relay.MoveFirstHeldFrameToEnd("DETACH"));
+      }
+      GTEST_LOG_(INFO) << "Releasing held frames: " << relay.HeldPerformatives();
+      relay.Release();
+      nextCbs.join();
+      EXPECT_TRUE(nextOpenOk);
+
       telemetrySender.Close();
     }
     mockServer.StopListening();

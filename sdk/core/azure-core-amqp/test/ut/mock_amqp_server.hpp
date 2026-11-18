@@ -16,6 +16,7 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 
+#include <atomic>
 #include <limits>
 #include <memory>
 
@@ -152,12 +153,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
               + std::to_string(static_cast<std::underlying_type_t<decltype(role)>>(role)));
         }
 
-        // Spin up a thread to process incoming messages.
+        // Spin up a thread to process incoming messages. The loop ends when the last link goes, so
+        // a link that attaches after that needs a new loop to process its messages and detach.
+        if (m_serverThread.joinable() && m_messageLoopExited)
+        {
+          m_serverThread.join();
+        }
         if (!m_serverThread.joinable())
         {
+          m_messageLoopExited = false;
           m_serverThread = std::thread([this]() {
             MessageLoop();
             GTEST_LOG_(INFO) << "Exiting message loop for " << m_name;
+            m_messageLoopExited = true;
           });
         }
         return true;
@@ -277,6 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       bool m_enableTrace{true};
       std::string m_name;
       std::thread m_serverThread;
+      std::atomic<bool> m_messageLoopExited{false};
       std::map<std::string, std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender>> m_sender;
       std::map<std::string, std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver>>
           m_receiver;
