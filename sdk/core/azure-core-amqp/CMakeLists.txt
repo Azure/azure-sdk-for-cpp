@@ -88,11 +88,16 @@ if (USE_RUST_AMQP)
     if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
       message("Configure rust for Windows x86 builds.")
 
-      # Run the rustup command to install the toolchain
-      execute_process(COMMAND rustup toolchain install stable-i686-pc-windows-msvc --force-non-host)
-
-      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
+      set(Rust_TOOLCHAIN "stable-x86_64-pc-windows-msvc")
       set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
+      execute_process(
+        COMMAND rustup target add "${Rust_CARGO_TARGET}" --toolchain "${Rust_TOOLCHAIN}"
+        RESULT_VARIABLE rustup_result
+      )
+      if (NOT rustup_result STREQUAL "0")
+        message(FATAL_ERROR
+          "Failed to install Rust target ${Rust_CARGO_TARGET} for ${Rust_TOOLCHAIN}: ${rustup_result}")
+      endif()
     else()
       message("Configure rust for Linux x86 builds.")
       execute_process(COMMAND rustup toolchain install stable-i686-unknown-linux-gnu)
