@@ -13,6 +13,8 @@
 ## 1.0.0-beta.14 (2026-11-06)
 
 ### Bugs Fixed
+-  Fixed Windows x86 Rust builds to use the x64 host toolchain with the i686 target 
+instead of requiring a separately published x86 host toolchain. 
 
 - Fixed uAMQP session destruction after a failed `End`. Native resources and the connection polling reference are released when the last session owner is destroyed; callers must still end sessions before destruction.
 
