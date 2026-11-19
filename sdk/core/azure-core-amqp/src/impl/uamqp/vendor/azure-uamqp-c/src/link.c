@@ -961,6 +961,11 @@ void link_destroy(LINK_HANDLE link)
             amqpvalue_destroy(link->attach_properties);
         }
 
+        if (link->desired_capabilities != NULL)
+        {
+            amqpvalue_destroy(link->desired_capabilities);
+        }
+
         if (link->received_payload != NULL)
         {
             free(link->received_payload);
@@ -1187,14 +1192,22 @@ int link_set_desired_capabilities(LINK_HANDLE link, AMQP_VALUE desired_capabilit
     }
     else
     {
-        link->desired_capabilities = amqpvalue_clone(desired_capabilities);
-        if (link->desired_capabilities == NULL)
+        // Clone before the release. The caller can pass the handle that the link holds,
+        // and amqpvalue_clone only adds a reference to it.
+        AMQP_VALUE new_desired_capabilities = amqpvalue_clone(desired_capabilities);
+        if (new_desired_capabilities == NULL)
         {
             LogError("Failed cloning desired capabilities");
             result = MU_FAILURE;
         }
         else
         {
+            if (link->desired_capabilities != NULL)
+            {
+                amqpvalue_destroy(link->desired_capabilities);
+            }
+
+            link->desired_capabilities = new_desired_capabilities;
             result = 0;
         }
     }
@@ -1213,14 +1226,22 @@ int link_set_attach_properties(LINK_HANDLE link, fields attach_properties)
     }
     else
     {
-        link->attach_properties = amqpvalue_clone(attach_properties);
-        if (link->attach_properties == NULL)
+        // Clone before the release. The caller can pass the handle that the link holds,
+        // and amqpvalue_clone only adds a reference to it.
+        fields new_attach_properties = amqpvalue_clone(attach_properties);
+        if (new_attach_properties == NULL)
         {
             LogError("Failed cloning attach properties");
             result = MU_FAILURE;
         }
         else
         {
+            if (link->attach_properties != NULL)
+            {
+                amqpvalue_destroy(link->attach_properties);
+            }
+
+            link->attach_properties = new_attach_properties;
             result = 0;
         }
     }

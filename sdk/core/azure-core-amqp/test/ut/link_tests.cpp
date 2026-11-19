@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../../src/impl/uamqp/amqp/private/link_impl.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/models/performatives/amqp_transfer.hpp"
@@ -8,6 +9,8 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/session.hpp"
 #include "mock_amqp_server.hpp"
+
+#include <azure_uamqp_c/amqpvalue.h>
 
 #include <memory>
 
@@ -117,6 +120,70 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
   }
+
+  TEST_F(TestLinks, LinkDesiredCapabilitiesReplaced)
+  {
+    Connection connection("localhost", nullptr, {});
+    Session session{connection.CreateSession()};
+
+    Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+    link.SetDesiredCapabilities("FirstCapability");
+    link.SetDesiredCapabilities("SecondCapability");
+    EXPECT_EQ(Models::AmqpValue{"SecondCapability"}, link.GetDesiredCapabilities());
+  }
+
+  TEST_F(TestLinks, LinkDesiredCapabilitiesSameHandle)
+  {
+    Connection connection("localhost", nullptr, {});
+    Session session{connection.CreateSession()};
+    auto link = std::make_shared<_detail::LinkImpl>(
+        _detail::SessionFactory::GetImpl(session),
+        "MySession",
+        SessionRole::Sender,
+        "MySource",
+        "MyTarget");
+    LINK_HANDLE handle = *link;
+
+    AMQP_VALUE value = amqpvalue_create_string("Capability");
+    ASSERT_EQ(0, link_set_desired_capabilities(handle, value));
+    amqpvalue_destroy(value);
+    AMQP_VALUE held = nullptr;
+    ASSERT_EQ(0, link_get_desired_capabilities(handle, &held));
+    // After this release, the link holds the only reference to held.
+    amqpvalue_destroy(held);
+
+    ASSERT_EQ(0, link_set_desired_capabilities(handle, held));
+    EXPECT_EQ(Models::AmqpValue{"Capability"}, link->GetDesiredCapabilities());
+  }
+
+  TEST_F(TestLinks, LinkAttachPropertiesSameHandle)
+  {
+    Connection connection("localhost", nullptr, {});
+    Session session{connection.CreateSession()};
+    auto link = std::make_shared<_detail::LinkImpl>(
+        _detail::SessionFactory::GetImpl(session),
+        "MySession",
+        SessionRole::Sender,
+        "MySource",
+        "MyTarget");
+    LINK_HANDLE handle = *link;
+
+    AMQP_VALUE properties = amqpvalue_create_map();
+    AMQP_VALUE key = amqpvalue_create_string("key");
+    AMQP_VALUE value = amqpvalue_create_string("value");
+    ASSERT_EQ(0, amqpvalue_set_map_value(properties, key, value));
+    amqpvalue_destroy(key);
+    amqpvalue_destroy(value);
+    ASSERT_EQ(0, link_set_attach_properties(handle, properties));
+    // After this release, the link holds the only reference to properties.
+    amqpvalue_destroy(properties);
+
+    ASSERT_EQ(0, link_set_attach_properties(handle, properties));
+    uint32_t pairCount = 0;
+    ASSERT_EQ(0, amqpvalue_get_map_pair_count(properties, &pairCount));
+    EXPECT_EQ(1u, pairCount);
+  }
+
   class LinkSocketListenerEvents
       : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
         public Azure::Core::Amqp::_internal::ConnectionEvents,
@@ -128,6 +195,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     std::shared_ptr<Azure::Core::Amqp::_detail::Link> m_link;
     std::unique_ptr<Azure::Core::Amqp::_internal::Session> m_session;
     std::shared_ptr<Azure::Core::Amqp::_internal::Connection> m_connection;
+    Azure::Core::Amqp::Models::AmqpValue m_attachProperties;
 
     virtual void OnSocketAccepted(
         std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> transport) override
@@ -178,9 +246,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_internal::SessionRole sessionRole,
         Azure::Core::Amqp::Models::AmqpValue const& source,
         Azure::Core::Amqp::Models::AmqpValue const& target,
-        Azure::Core::Amqp::Models::AmqpValue const&) override
+        Azure::Core::Amqp::Models::AmqpValue const& properties) override
     {
       GTEST_LOG_(INFO) << "OnLinkAttached - Link attached to session.";
+      m_attachProperties = properties;
       std::unique_ptr<Azure::Core::Amqp::_detail::Link> newLink;
       if (sessionRole == SessionRole::Sender)
       {
@@ -227,6 +296,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto result = m_receiveLinkQueue.WaitForResult(context);
       return std::get<0>(*result);
     }
+    Azure::Core::Amqp::Models::AmqpValue const& GetAttachProperties() const
+    {
+      return m_attachProperties;
+    }
 
     void Cleanup()
     {
@@ -270,6 +343,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_TRUE(events.WaitForSession({}));
 
       EXPECT_TRUE(events.WaitForLink({}));
+      link.Detach(false, {}, {}, {});
+    }
+    events.Cleanup();
+    listener.Stop();
+  }
+
+  TEST_F(TestLinks, LinkAttachPropertiesReplaced)
+  {
+    LinkSocketListenerEvents events;
+    ConnectionOptions connectionOptions;
+    connectionOptions.Port = FindAvailableSocket();
+    Connection connection("localhost", nullptr, connectionOptions, &events);
+    Session session{connection.CreateSession()};
+    Network::_detail::SocketListener listener(connectionOptions.Port, &events);
+    EXPECT_NO_THROW(listener.Start());
+    {
+      Link link(session, "MySession", SessionRole::Sender, "MySource", "MyTarget");
+      link.SetAttachProperties(Models::AmqpMap{{"first", "value1"}}.AsAmqpValue());
+      link.SetAttachProperties(Models::AmqpMap{{"second", "value2"}}.AsAmqpValue());
+      link.Attach();
+
+      EXPECT_TRUE(events.WaitForConnection(listener, {}));
+      EXPECT_TRUE(events.WaitForSession({}));
+      EXPECT_TRUE(events.WaitForLink({}));
+      Models::AmqpValue expected{Models::AmqpMap{{"second", "value2"}}.AsAmqpValue()};
+      EXPECT_EQ(expected, events.GetAttachProperties());
       link.Detach(false, {}, {}, {});
     }
     events.Cleanup();
