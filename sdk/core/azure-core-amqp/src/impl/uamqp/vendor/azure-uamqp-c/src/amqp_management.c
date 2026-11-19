@@ -31,6 +31,12 @@ typedef struct OPERATION_MESSAGE_INSTANCE_TAG
     AMQP_MANAGEMENT_HANDLE amqp_management;
     ASYNC_OPERATION_HANDLE send_async_context;
     ASYNC_OPERATION_HANDLE execute_async_operation;
+    /** @brief True while `messagesender_send_async` runs for this operation. */
+    bool in_send_async;
+    /** @brief The send completed inside `messagesender_send_async`; its returned handle is not valid. */
+    bool send_completed_in_send_async;
+    /** @brief The send failed inside `messagesender_send_async`; handled by its caller. */
+    bool send_failed_in_send_async;
 } OPERATION_MESSAGE_INSTANCE;
 
 DEFINE_ASYNC_OPERATION_CONTEXT(OPERATION_MESSAGE_INSTANCE);
@@ -382,6 +388,13 @@ static void on_message_send_complete(void* context, MESSAGE_SEND_RESULT send_res
             /* Codes_SRS_AMQP_MANAGEMENT_01_170: [ If `send_result` is `MESSAGE_SEND_OK`, `on_message_send_complete` shall return. ]*/
             pending_operation_message->message_send_confirmed = true;
             pending_operation_message->send_async_context = NULL;
+            pending_operation_message->send_completed_in_send_async = pending_operation_message->in_send_async;
+        }
+        else if (pending_operation_message->in_send_async)
+        {
+            /* Codes_SRS_AMQP_MANAGEMENT_01_199: [ If `send_result` is different than `MESSAGE_SEND_OK` while `messagesender_send_async` is still running for the pending operation, `on_message_send_complete` shall only record the failure, leaving it to `amqp_management_execute_operation_async` to fail. ]*/
+            pending_operation_message->send_completed_in_send_async = true;
+            pending_operation_message->send_failed_in_send_async = true;
         }
         else if (send_result == MESSAGE_SEND_CANCELLED)
         {
@@ -1299,8 +1312,15 @@ ASYNC_OPERATION_HANDLE amqp_management_execute_operation_async(AMQP_MANAGEMENT_H
                                 {
                                     /* Codes_SRS_AMQP_MANAGEMENT_01_088: [ `amqp_management_execute_operation_async` shall send the message by calling `messagesender_send_async`. ]*/
                                     /* Codes_SRS_AMQP_MANAGEMENT_01_166: [ The `on_message_send_complete` callback shall be passed to the `messagesender_send_async` call. ]*/
-                                    pending_operation_message->send_async_context = messagesender_send_async(amqp_management->message_sender, cloned_message, on_message_send_complete, added_item, 0);
-                                    if (pending_operation_message->send_async_context == NULL)
+                                    ASYNC_OPERATION_HANDLE send_async_context;
+
+                                    pending_operation_message->in_send_async = true;
+                                    send_async_context = messagesender_send_async(amqp_management->message_sender, cloned_message, on_message_send_complete, added_item, 0);
+                                    pending_operation_message->in_send_async = false;
+
+                                    if ((send_async_context == NULL) ||
+                                        /* Codes_SRS_AMQP_MANAGEMENT_01_200: [ If the send failed while `messagesender_send_async` was running, `amqp_management_execute_operation_async` shall fail and return NULL without calling `on_execute_operation_complete`. ]*/
+                                        pending_operation_message->send_failed_in_send_async)
                                     {
                                         /* Codes_SRS_AMQP_MANAGEMENT_01_089: [ If `messagesender_send_async` fails, `amqp_management_execute_operation_async` shall fail and return NULL. ]*/
                                         LogError("Could not send request message");
@@ -1310,6 +1330,12 @@ ASYNC_OPERATION_HANDLE amqp_management_execute_operation_async(AMQP_MANAGEMENT_H
                                     }
                                     else
                                     {
+                                        /* Codes_SRS_AMQP_MANAGEMENT_01_201: [ If the send completed while `messagesender_send_async` was running, the handle returned by `messagesender_send_async` shall not be stored. ]*/
+                                        if (!pending_operation_message->send_completed_in_send_async)
+                                        {
+                                            pending_operation_message->send_async_context = send_async_context;
+                                        }
+
                                         /* Codes_SRS_AMQP_MANAGEMENT_01_107: [ The message Id set on the message properties shall be incremented with each operation. ]*/
                                         amqp_management->next_message_id++;
                                     }

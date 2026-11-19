@@ -42,6 +42,19 @@ MU_DEFINE_ENUM(MESSAGE_SENDER_STATE, MESSAGE_SENDER_STATE_VALUES)
     MOCKABLE_FUNCTION(, void, messagesender_destroy, MESSAGE_SENDER_HANDLE, message_sender);
     MOCKABLE_FUNCTION(, int, messagesender_open, MESSAGE_SENDER_HANDLE, message_sender);
     MOCKABLE_FUNCTION(, int, messagesender_close, MESSAGE_SENDER_HANDLE, message_sender);
+    /**
+     * @brief   Sends a message.
+     * @param   message_sender           The message sender.
+     * @param   message                  The message to send. The caller keeps ownership.
+     * @param   on_message_send_complete Called once when the send completes.
+     * @param   callback_context         Context passed to @p on_message_send_complete.
+     * @param   timeout                  Send timeout in milliseconds; 0 for none.
+     * @return  A handle that can cancel the send, valid until @p on_message_send_complete is called;
+     *          NULL on failure, in which case @p on_message_send_complete is not called.
+     * @remarks @p on_message_send_complete can be called before this function returns (e.g. the send
+     *          is settled or fails while being sent). The returned handle is then already destroyed
+     *          and must not be used; callers must detect that case in the callback.
+     */
     MOCKABLE_FUNCTION(, ASYNC_OPERATION_HANDLE, messagesender_send_async, MESSAGE_SENDER_HANDLE, message_sender, MESSAGE_HANDLE, message, ON_MESSAGE_SEND_COMPLETE, on_message_send_complete, void*, callback_context, tickcounter_ms_t, timeout);
     MOCKABLE_FUNCTION(, void, messagesender_set_trace, MESSAGE_SENDER_HANDLE, message_sender, bool, traceOn);
 

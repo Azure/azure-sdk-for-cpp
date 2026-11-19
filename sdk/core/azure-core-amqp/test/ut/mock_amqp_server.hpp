@@ -16,6 +16,7 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 
+#include <limits>
 #include <memory>
 
 #include <gtest/gtest.h>
@@ -643,7 +644,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           for (const auto& session : m_sessions)
           {
-            session->End({});
+            // A session on a connection whose peer is gone cannot send its END frame.
+            try
+            {
+              session->End({});
+            }
+            catch (std::exception const& ex)
+            {
+              GTEST_LOG_(INFO) << "End of a mock session reported: " << ex.what();
+            }
           }
           // Note: clearing the sessions list destroys the session and calls session_end always, so
           // it does not need to be called here.
@@ -691,6 +700,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       void EnableTrace(bool enableTrace) { m_enableTrace = enableTrace; }
 
+      void SetMaxFrameSize(uint32_t maxFrameSize) { m_maxFrameSize = maxFrameSize; }
+
     protected:
       // Inherited from SocketListenerEvents
       virtual void OnSocketAccepted(
@@ -704,6 +715,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         options.ContainerId = m_connectionId;
         options.IdleTimeout = std::chrono::minutes(2);
         options.EnableTrace = m_enableTrace;
+        options.MaxFrameSize = m_maxFrameSize;
         auto newConnection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
             amqpTransport, options, this, this);
         m_connections.push_back(newConnection);
@@ -795,6 +807,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;
 
       bool m_enableTrace{true};
+      uint32_t m_maxFrameSize{(std::numeric_limits<uint32_t>::max)()};
       bool m_listening{false};
 
       std::string m_connectionId;

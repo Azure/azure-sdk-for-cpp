@@ -715,7 +715,14 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
                     transfer_async_operation = link_transfer_async(message_sender->link, message_format, &payload, 1, on_delivery_settled, pending_send, &link_transfer_error, message_with_callback->timeout);
                     if (transfer_async_operation == NULL)
                     {
-                        if (link_transfer_error == LINK_TRANSFER_BUSY)
+                        if (!is_message_in_queue(message_sender, pending_send))
+                        {
+                            /* The link already settled, completed and removed this send, e.g. when the
+                            connection ended while sending it. Report it like a send settled in-line. */
+                            LogError("Link transfer failed after the send was completed");
+                            result = SEND_ONE_MESSAGE_OK;
+                        }
+                        else if (link_transfer_error == LINK_TRANSFER_BUSY)
                         {
                             message_with_callback->message_send_state = MESSAGE_SEND_STATE_NOT_SENT;
                             result = SEND_ONE_MESSAGE_BUSY;

@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a uAMQP access violation when a socket write fails during a multi-frame message send. The send now completes with an error. A close or session end that cannot send its frame on a broken connection now reports a failure. [[#7549]](https://github.com/Azure/azure-sdk-for-cpp/issues/7549)
+
 ### Other Changes
 
 ## 1.0.0-beta.14 (2026-11-06)

@@ -267,6 +267,7 @@ extern int connection_encode_frame(ENDPOINT_HANDLE endpoint, const AMQP_VALUE pe
 **S_R_S_CONNECTION_01_255: [**The payload size shall be computed based on all the payload chunks passed as argument in payloads.**]** 
 **S_R_S_CONNECTION_01_253: [**If amqp_frame_codec_begin_encode_frame or amqp_frame_codec_encode_payload_bytes fails, then connection_encode_frame shall fail and return a non-zero value.**]** 
 **S_R_S_CONNECTION_01_254: [**If connection_encode_frame is called before the connection is in the OPENED state, connection_encode_frame shall fail and return a non-zero value.**]** 
+**S_R_S_CONNECTION_01_283: [**If sending the encoded bytes fails, connection_encode_frame shall fail and return a non-zero value.**]** 
 **S_R_S_CONNECTION_01_256: [**Each payload passed in the payloads array shall be passed to amqp_frame_codec by calling amqp_frame_codec_encode_payload_bytes.**]** 
 
 ###connection_set_trace

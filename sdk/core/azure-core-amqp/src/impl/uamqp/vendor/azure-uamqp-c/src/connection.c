@@ -2435,6 +2435,13 @@ int connection_encode_frame(ENDPOINT_HANDLE endpoint, AMQP_VALUE performative, P
                 LogError("Encoding AMQP frame failed");
                 result = MU_FAILURE;
             }
+            else if (connection->connection_state != CONNECTION_STATE_OPENED)
+            {
+                /* Codes_S_R_S_CONNECTION_01_283: [If sending the encoded bytes fails, connection_encode_frame shall fail and return a non-zero value.] */
+                /* on_bytes_encoded ends the connection when xio_send fails. */
+                LogError("Sending AMQP frame failed");
+                result = MU_FAILURE;
+            }
             else
             {
                 if (connection->is_trace_on == 1)
