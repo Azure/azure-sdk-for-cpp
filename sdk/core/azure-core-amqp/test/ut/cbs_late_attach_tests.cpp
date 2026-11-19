@@ -163,14 +163,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       bool MoveFirstHeldFrameToEnd(std::string const& performative)
       {
         std::lock_guard<std::mutex> lock(m_mutex);
-        for (auto const& frame : SplitFrames(m_held))
+        auto const frames = SplitFrames(m_held);
+        for (auto const& frame : frames)
         {
           if (frame.Performative == performative)
           {
+            // Insert before any partial frame at the end of the held bytes.
+            auto const prefixEnd = frames.back().Offset + frames.back().Size - frame.Size;
             auto const begin = m_held.begin() + static_cast<std::ptrdiff_t>(frame.Offset);
             std::vector<char> moved(begin, begin + static_cast<std::ptrdiff_t>(frame.Size));
             m_held.erase(begin, begin + static_cast<std::ptrdiff_t>(frame.Size));
-            m_held.insert(m_held.end(), moved.begin(), moved.end());
+            m_held.insert(
+                m_held.begin() + static_cast<std::ptrdiff_t>(prefixEnd),
+                moved.begin(),
+                moved.end());
             return true;
           }
         }
