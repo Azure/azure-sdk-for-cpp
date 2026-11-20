@@ -123,6 +123,8 @@ public:
    * @brief Construct an instance of `%DateTime` from `std::chrono::system_clock::time_point`.
    * @param systemTime A value of `std::chrono::system_clock::time_point`.
    *
+   * @throw std::invalid_argument If systemTime is outside the range that can be represented
+   * by #Azure::DateTime.
    */
   DateTime(std::chrono::system_clock::time_point const& systemTime);
 

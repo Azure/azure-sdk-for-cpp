@@ -42,7 +42,19 @@ DateTime GetSystemClockEpoch()
       static_cast<int8_t>(systemClockEpochUtcStructTm->tm_sec));
 }
 
-DateTime GetMaxDateTime()
+uint64_t GetMagnitude(int64_t count)
+{
+  return count < 0 ? uint64_t(0) - static_cast<uint64_t>(count) : static_cast<uint64_t>(count);
+}
+
+int64_t NegativeCount(uint64_t magnitude)
+{
+  // Subtract before narrowing so the minimum signed count remains representable.
+  return magnitude == 0 ? 0 : -static_cast<int64_t>(magnitude - 1) - 1;
+}
+
+template <typename ToDuration, typename FromDuration>
+uint64_t ScaleTicks(uint64_t count, uint64_t limit, char const* errorPrefix, bool negative)
 {
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -50,69 +62,55 @@ DateTime GetMaxDateTime()
 #pragma warning(disable : 6326)
 #endif
   static_assert(
-      std::is_signed<std::chrono::system_clock::duration::rep>::value
-          && std::is_integral<std::chrono::system_clock::duration::rep>::value
-          && sizeof(std::chrono::system_clock::duration::rep) <= sizeof(std::int64_t),
-      "Currently, GetMaxDateTime() is written with an expectation that "
-      "std::chrono::system_clock::duration::rep is signed integral type that can fit into 64 "
-      "bits.");
+      std::is_signed<typename FromDuration::rep>::value
+          && std::is_integral<typename FromDuration::rep>::value
+          && sizeof(typename FromDuration::rep) <= sizeof(int64_t)
+          && std::is_signed<typename ToDuration::rep>::value
+          && std::is_integral<typename ToDuration::rep>::value
+          && sizeof(typename ToDuration::rep) <= sizeof(int64_t),
+      "Clock conversion requires signed integral duration counts that fit into 64 bits.");
 
+  using Ratio = std::ratio_divide<typename FromDuration::period, typename ToDuration::period>;
   static_assert(
-      std::is_signed<DateTime::clock::duration::rep>::value
-          && std::is_integral<DateTime::clock::duration::rep>::value
-          && sizeof(DateTime::clock::duration::rep) <= sizeof(std::int64_t),
-      "GetMaxDateTime() expects DateTime::clock::duration::rep to be signed integral type that can "
-      "fit into 64 bits.");
-
-  using Rep = std::int64_t;
-
-  using CommonDuration = std::chrono::duration<
-      Rep,
-      std::conditional<
-          std::ratio_greater<
-              DateTime::clock::duration::period,
-              std::chrono::system_clock::duration::period>::value,
-          DateTime::clock::duration::period,
-          std::chrono::system_clock::duration::period>::type>;
-
-  std::chrono::system_clock::time_point const scEpochTimePoint
-      = std::chrono::system_clock::time_point();
-
-  std::chrono::system_clock::duration const scSystemClockMaxDuration
-      = (scEpochTimePoint + ((std::chrono::system_clock::time_point::max)() - scEpochTimePoint))
-            .time_since_epoch();
-
-  Rep const commonSystemClockMax
-      = std::chrono::duration_cast<CommonDuration>(scSystemClockMaxDuration).count();
-
-  Rep const commonDtClockMax
-      = std::chrono::duration_cast<CommonDuration>((DateTime::clock::duration::max)()).count();
-
-  Rep const dtSystemClockMax = (commonSystemClockMax < commonDtClockMax)
-      ? std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count()
-      : ((DateTime::clock::duration::max)()).count();
-
-  Azure::DateTime::duration const dtSystemClockEpochDuration
-      = GetSystemClockEpoch().time_since_epoch();
-
-  Rep const commonSystemClockEpoch
-      = std::chrono::duration_cast<CommonDuration>(dtSystemClockEpochDuration).count();
-
-  Rep const dtSystemClockEpoch
-      = std::chrono::duration_cast<DateTime::clock::duration>(dtSystemClockEpochDuration).count();
-
-  constexpr Rep commonRepMax = std::chrono::duration_cast<CommonDuration>(
-                                   DateTime::duration((std::numeric_limits<Rep>::max)()))
-                                   .count();
-
-  return DateTime(DateTime::time_point(DateTime::duration(
-      (commonSystemClockMax < commonRepMax
-       && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
-          ? (dtSystemClockEpoch + dtSystemClockMax)
-          : dtSystemClockMax)));
+      Ratio::num == 1 || Ratio::den == 1,
+      "Clock periods must be integer multiples of one another.");
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
+  count /= static_cast<uint64_t>(Ratio::den);
+  if (count > limit / static_cast<uint64_t>(Ratio::num))
+  {
+    throw std::invalid_argument(std::string(errorPrefix) + (negative ? "small." : "big."));
+  }
+  return count * static_cast<uint64_t>(Ratio::num);
+}
+
+DateTime::duration SystemClockToDateTime(
+    std::chrono::system_clock::duration systemDuration,
+    DateTime::duration epoch)
+{
+  auto const count = systemDuration.count();
+  auto const epochCount = static_cast<uint64_t>(epoch.count());
+  auto const negative = count < 0;
+  auto const limit = negative
+      ? epochCount + GetMagnitude((DateTime::duration::min)().count())
+      : static_cast<uint64_t>((DateTime::duration::max)().count()) - epochCount;
+  auto const magnitude = ScaleTicks<DateTime::duration, std::chrono::system_clock::duration>(
+      GetMagnitude(count),
+      limit,
+      "Cannot represent std::chrono::system_clock::time_point as Azure::DateTime: value is too ",
+      negative);
+
+  if (!negative)
+  {
+    return DateTime::duration(static_cast<int64_t>(epochCount + magnitude));
+  }
+  if (magnitude <= epochCount)
+  {
+    return DateTime::duration(static_cast<int64_t>(epochCount - magnitude));
+  }
+  return DateTime::duration(NegativeCount(magnitude - epochCount));
 }
 
 template <typename T>
@@ -481,36 +479,30 @@ DateTime::DateTime(
 }
 
 DateTime::DateTime(std::chrono::system_clock::time_point const& systemTime)
-    : DateTime(
-        SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+    : time_point(
+          SystemClockToDateTime(systemTime.time_since_epoch(), SystemClockEpoch.time_since_epoch()))
 {
 }
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
-  static DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());
-  static DateTime const SystemClockMax(GetMaxDateTime());
-
-  auto outOfRange = 0;
-  if (*this < SystemClockMin)
-  {
-    outOfRange = -1;
-  }
-  else if (*this > SystemClockMax)
-  {
-    outOfRange = +1;
-  }
-
-  if (outOfRange != 0)
-  {
-    throw std::invalid_argument(
-        std::string("Cannot represent Azure::DateTime as "
-                    "std::chrono::system_clock::time_point: value is too ")
-        + (outOfRange < 0 ? "small." : "big."));
-  }
-
-  return std::chrono::system_clock::time_point()
-      + std::chrono::duration_cast<std::chrono::system_clock::duration>(*this - SystemClockEpoch);
+  using SystemDuration = std::chrono::system_clock::duration;
+  auto const count = time_since_epoch().count();
+  auto const epochCount = SystemClockEpoch.time_since_epoch().count();
+  auto const negative = count < epochCount;
+  // Unsigned subtraction also represents differences larger than INT64_MAX.
+  auto const magnitude = negative
+      ? static_cast<uint64_t>(epochCount) - static_cast<uint64_t>(count)
+      : static_cast<uint64_t>(count) - static_cast<uint64_t>(epochCount);
+  auto const limit = negative ? GetMagnitude((SystemDuration::min)().count())
+                              : static_cast<uint64_t>((SystemDuration::max)().count());
+  auto const systemCount = ScaleTicks<SystemDuration, duration>(
+      magnitude,
+      limit,
+      "Cannot represent Azure::DateTime as std::chrono::system_clock::time_point: value is too ",
+      negative);
+  return std::chrono::system_clock::time_point(SystemDuration(static_cast<SystemDuration::rep>(
+      negative ? NegativeCount(systemCount) : static_cast<int64_t>(systemCount))));
 }
 
 DateTime DateTime::Parse(std::string const& dateTime, DateFormat format)
