@@ -12,6 +12,8 @@ trigger:
       - cmake-modules/AzureCodeCoverage.cmake
       - cmake-modules/tests/code-coverage
       - sdk/eventhubs
+      - sdk/core/azure-core-amqp
+      - eng/pipelines/templates/stages/platform-matrix-uamqp.json
 
 pr:
   branches:
@@ -25,6 +27,8 @@ pr:
       - cmake-modules/AzureCodeCoverage.cmake
       - cmake-modules/tests/code-coverage
       - sdk/eventhubs
+      - sdk/core/azure-core-amqp
+      - eng/pipelines/templates/stages/platform-matrix-uamqp.json
       - eng/common/testproxy
 
 extends:
