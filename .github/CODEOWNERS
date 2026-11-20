@@ -6,7 +6,7 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman @xirzec
+/**                      @rickwinter @LarryOsterman @xirzec @j7nw4r
 
 #Catch all for files at the root
 /*                       @rickwinter @LarryOsterman @antkmsft @j7nw4r @xirzec
