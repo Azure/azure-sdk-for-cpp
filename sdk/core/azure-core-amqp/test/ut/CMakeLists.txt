@@ -20,6 +20,7 @@ IF (USE_UAMQP)
 set(UAMQP_ONLY_TESTS   
   transport_tests.cpp
   link_tests.cpp
+  cbs_late_attach_tests.cpp
 )
 ENDIF()
 
