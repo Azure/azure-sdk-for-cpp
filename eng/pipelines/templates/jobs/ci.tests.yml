@@ -55,13 +55,17 @@ parameters:
   - name: DisplayName
     type: string
     default: Validate
+  # The name shown in the pipeline and GitHub checks. Empty means DisplayName.
+  - name: JobDisplayName
+    type: string
+    default: ''
   - name: OSName
     type: string
     default: ''
 
 jobs:
   - job: ${{ parameters.DisplayName }}_${{ parameters.OSName }}
-    displayName: ${{ parameters.DisplayName }}
+    displayName: ${{ coalesce(parameters.JobDisplayName, parameters.DisplayName) }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
     strategy:
@@ -369,10 +373,7 @@ jobs:
       # "Validate windows2022_UWP_debug_x86" -> "windows2022_UWP_debug_x86_attempt_1"
       - pwsh: |
           $artifactName = "$(Agent.JobName)_attempt_$(System.JobAttempt)"
-          $parts = $artifactName -split ' '
-          if ($parts[1]) {
-            $artifactName = $parts[1]
-          }
+          $artifactName = ($artifactName -split ' ')[-1]
           Write-Host "##vso[task.setvariable variable=MapFileArtifactName;]$artifactName"
         displayName: Set map file artifact name
         condition: eq(variables['PublishMapFiles'], 'true')

@@ -194,6 +194,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             sender.second->Close();
           }
         }
+        m_receiver.clear();
+        m_sender.clear();
       }
 
     protected:
