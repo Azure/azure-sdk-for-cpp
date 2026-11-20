@@ -14,6 +14,7 @@
 #include <azure/core/internal/strings.hpp>
 
 #include <array>
+#include <exception>
 #include <functional>
 #include <type_traits>
 
@@ -28,6 +29,21 @@ using Azure::Identity::_detail::IdentityLog;
 
 namespace {
 constexpr auto CredentialSpecifierEnvVarName = "AZURE_TOKEN_CREDENTIALS";
+
+class FailedManagedIdentityCredential final : public TokenCredential {
+  std::exception_ptr m_error;
+
+public:
+  explicit FailedManagedIdentityCredential(std::exception_ptr error)
+      : TokenCredential("ManagedIdentityCredential"), m_error(error)
+  {
+  }
+
+  AccessToken GetToken(TokenRequestContext const&, Context const&) const override
+  {
+    std::rethrow_exception(m_error);
+  }
+};
 } // namespace
 
 DefaultAzureCredential::DefaultAzureCredential()
@@ -97,9 +113,22 @@ DefaultAzureCredential::DefaultAzureCredential(
         CredentialInfo{
             true,
             "ManagedIdentityCredential",
-            [&specificCred](auto options) {
-              return std::shared_ptr<ManagedIdentityCredential>(
-                  new ManagedIdentityCredential({}, !specificCred, options));
+            [&specificCred](auto options) -> std::shared_ptr<TokenCredential> {
+              try
+              {
+                return std::shared_ptr<ManagedIdentityCredential>(new ManagedIdentityCredential(
+                    Environment::GetVariable("AZURE_CLIENT_ID"), !specificCred, options));
+              }
+              catch (AuthenticationException const& error)
+              {
+                IdentityLog::Write(
+                    IdentityLog::Level::Verbose,
+                    "DefaultAzureCredential: deferring ManagedIdentityCredential "
+                    "construction failure until it is attempted: "
+                        + std::string(error.what()));
+
+                return std::make_shared<FailedManagedIdentityCredential>(std::current_exception());
+              }
             }},
         CredentialInfo{
             false,
