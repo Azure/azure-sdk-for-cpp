@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.0-beta.15 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.15 (2026-11-20)
 
 ### Bugs Fixed
 
@@ -12,8 +8,7 @@
 - Fixed a uAMQP access violation on the connection polling thread when a CBS open ends before the service answers its ATTACH. The session now keeps the destroyed link endpoint until the service detaches it, and drops the late frames for that link. [[#7557]](https://github.com/Azure/azure-sdk-for-cpp/issues/7557)
 - Fixed a uAMQP leak of one socket XIO for each connection that `AmqpHeaderDetectTransportFactory` accepts. The header-detect transport now owns and destroys the transport under it. [[#7556]](https://github.com/Azure/azure-sdk-for-cpp/issues/7556)
 - Fixed a uAMQP leak of the socket or TLS XIO and the SASL mechanism for each transport that `SaslTransportFactory` creates. [[#7556]](https://github.com/Azure/azure-sdk-for-cpp/issues/7556)
-
-### Other Changes
+- Fixed a uAMQP leak of the link desired capabilities when a link is destroyed, and of the old value when a caller sets the desired capabilities or the attach properties again. [[#7555]](https://github.com/Azure/azure-sdk-for-cpp/issues/7555)
 
 ## 1.0.0-beta.14 (2026-11-06)
 
