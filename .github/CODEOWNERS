@@ -9,38 +9,38 @@
 /**                      @rickwinter @LarryOsterman @xirzec
 
 #Catch all for files at the root
-/*                       @rickwinter @LarryOsterman @antkmsft @xirzec
+/*                       @rickwinter @LarryOsterman @antkmsft @j7nw4r @xirzec
 /sdk/                    @rickwinter @LarryOsterman @xirzec
 
 # Git Hub integration and bot rules
 /.github/                @rickwinter @xirzec
 
 # Samples
-/samples/                @rickwinter @antkmsft @LarryOsterman @xirzec
+/samples/                @rickwinter @antkmsft @j7nw4r @LarryOsterman @xirzec
 
 # AzureSdkOwners: @rickwinter @xirzec
 # ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @antkmsft @LarryOsterman @xirzec
+/sdk/core/               @rickwinter @antkmsft @j7nw4r @LarryOsterman @xirzec
 
 # PRLabel: %Azure.Core
 /sdk/core/azure-core-amqp/                                         @rickwinter @antkmsft @LarryOsterman @xirzec @j7nw4r @sagar0207 @SwayGom @sjkwak @hmlam
 
-# AzureSdkOwners: @antkmsft
+# AzureSdkOwners: @antkmsft @j7nw4r
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity @xirzec
+/sdk/identity/           @antkmsft @j7nw4r @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity @xirzec
 
 ####################
 # Client Libraries
 ####################
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                             @antkmsft @LarryOsterman @RickWinter @xirzec
+/sdk/appconfiguration/                                             @antkmsft @j7nw4r @LarryOsterman @RickWinter @xirzec
 
 # AzureSdkOwners:                                                  @rickwinter @xirzec
 # ServiceLabel: %App Configuration
-# ServiceOwners:                                                   @antkmsft @LarryOsterman @RickWinter @xirzec
+# ServiceOwners:                                                   @antkmsft @j7nw4r @LarryOsterman @RickWinter @xirzec
 
 # PRLabel: %Attestation
 /sdk/attestation/                                                  @Azure/azure-sdk-write-attestation @rickwinter @xirzec
@@ -49,10 +49,10 @@
 # ServiceOwners:                                                   @Azure/azure-sdk-write-attestation
 
 # PRLabel: %EngSys
-/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @antkmsft
+/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @antkmsft @j7nw4r
 
 # ServiceLabel: %EngSys
-# ServiceOwners:                                                   @danieljurek @antkmsft @LarryOsterman @RickWinter
+# ServiceOwners:                                                   @danieljurek @antkmsft @j7nw4r @LarryOsterman @RickWinter
 
 # PRLabel: %Event Hubs
 /sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @meetamitbhatia @SwayGom @sagar0207
@@ -68,17 +68,17 @@
 # ServiceOwners:                                                   @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Storage
-/sdk/storage/                                                      @antkmsft @Jinming-Hu @LarryOsterman @amnguye @gapra-msft
+/sdk/storage/                                                      @antkmsft @j7nw4r @Jinming-Hu @LarryOsterman @amnguye @gapra-msft
 
 # ServiceLabel: %Storage
 # ServiceOwners:                                                   @Jinming-Hu @amnguye @gapra-msft
 
 # PRLabel: %Tables
-/sdk/tables/                                                       @antkmsft @LarryOsterman
+/sdk/tables/                                                       @antkmsft @j7nw4r @LarryOsterman
 
 # AzureSdkOwners:                                                  @rickwinter @xirzec
 # ServiceLabel: %Tables
-# ServiceOwners:                                                   @antkmsft @LarryOsterman
+# ServiceOwners:                                                   @antkmsft @j7nw4r @LarryOsterman
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
@@ -87,7 +87,7 @@
 # Eng Sys
 ###########
 
-/eng/                    @danieljurek @antkmsft
+/eng/                    @danieljurek @antkmsft @j7nw4r
 /eng/common/             @Azure/azure-sdk-eng @Azure/azure-sdk-sync-approvers
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
