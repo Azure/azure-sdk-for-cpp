@@ -4,8 +4,6 @@
 # Project set up
 cmake_minimum_required(VERSION 3.13)
 project(Application-using-storage-blobs LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #
 # Fetch content
@@ -25,6 +23,7 @@ add_executable (
      application
      src/main.cpp
 )
+target_compile_features(application PRIVATE cxx_std_14)
 
 target_compile_definitions(application PRIVATE _azure_BUILDING_SAMPLES)
 

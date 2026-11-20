@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-security-keyvault LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code

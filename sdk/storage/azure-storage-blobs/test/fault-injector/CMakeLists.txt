@@ -6,8 +6,6 @@ cmake_minimum_required (VERSION 3.13)
 set(azure-storage-blobs-test-fault-injector)
 
 project (azure-storage-blobs-test-fault-injector LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   azure-storage-blobs-test-fault-injector
