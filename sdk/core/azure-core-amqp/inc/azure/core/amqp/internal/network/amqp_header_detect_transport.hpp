@@ -18,7 +18,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   public:
     /** Construct a new instance of an Amqp Header Detect Transport.
      *
-     * @param parentTransport The parent transport to read from.
+     * @param parentTransport The parent transport to read from. Use a socket transport that a
+     * SocketListener accepted. A TLS parent is not supported, because a TLS adapter can call
+     * into the destroyed header-detect layer when it cancels a queued send.
      * @param eventHandler The event handler to notify when the AMQP header is detected.
      *
      */

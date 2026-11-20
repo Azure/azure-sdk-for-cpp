@@ -13,6 +13,8 @@
 #include <azure_uamqp_c/sasl_plain.h>
 #include <azure_uamqp_c/saslclientio.h>
 
+#include <utility>
+
 // cspell: ignore saslclientio
 Azure::Core::Amqp::Network::_internal::Transport
 Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
@@ -22,13 +24,13 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     uint16_t hostPort,
     TransportEvents* eventHandler)
 {
-  XIO_HANDLE underlying_io;
+  Azure::Core::Amqp::Network::_detail::UniqueXioHandle underlyingXio;
   // We assume that localhost connections will be using raw sockets, not TLS.
   if (hostName == "localhost")
   {
     SOCKETIO_CONFIG socketConfig{hostName.c_str(), hostPort, nullptr};
 
-    underlying_io = xio_create(socketio_get_interface_description(), &socketConfig);
+    underlyingXio.reset(xio_create(socketio_get_interface_description(), &socketConfig));
   }
   else
   {
@@ -36,19 +38,23 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     TLSIO_CONFIG tlsConfig{};
     tlsConfig.hostname = hostName.c_str();
     tlsConfig.port = hostPort;
-    underlying_io = xio_create(tlsioConfig, &tlsConfig);
+    underlyingXio.reset(xio_create(tlsioConfig, &tlsConfig));
   }
 
   SASL_PLAIN_CONFIG saslPlainConfig{};
   saslPlainConfig.authcid = saslKeyName.c_str();
   saslPlainConfig.passwd = saslKey.c_str();
-  auto saslMechanism = saslmechanism_create(saslplain_get_interface(), &saslPlainConfig);
+  Azure::Core::Amqp::Network::_detail::UniqueSaslMechanismHandle saslMechanism{
+      saslmechanism_create(saslplain_get_interface(), &saslPlainConfig)};
 
   SASLCLIENTIO_CONFIG saslConfig;
-  saslConfig.underlying_io = underlying_io;
-  saslConfig.sasl_mechanism = saslMechanism;
-  return _detail::TransportImpl::CreateFromXioHandle(
+  saslConfig.underlying_io = underlyingXio.get();
+  saslConfig.sasl_mechanism = saslMechanism.get();
+  auto transport = _detail::TransportImpl::CreateFromXioHandle(
       xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
+  transport->AdoptUnderlyingXio(std::move(underlyingXio));
+  transport->AdoptSaslMechanism(std::move(saslMechanism));
+  return transport;
 }
 
 Azure::Core::Amqp::Network::_internal::Transport
@@ -57,13 +63,13 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     uint16_t hostPort,
     TransportEvents* eventHandler)
 {
-  XIO_HANDLE underlying_io;
+  Azure::Core::Amqp::Network::_detail::UniqueXioHandle underlyingXio;
   // We assume that localhost connections will be using raw sockets, not TLS.
   if (hostName == "localhost")
   {
     SOCKETIO_CONFIG socketConfig{hostName.c_str(), hostPort, nullptr};
 
-    underlying_io = xio_create(socketio_get_interface_description(), &socketConfig);
+    underlyingXio.reset(xio_create(socketio_get_interface_description(), &socketConfig));
   }
   else
   {
@@ -71,14 +77,18 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     TLSIO_CONFIG tlsConfig{};
     tlsConfig.hostname = hostName.c_str();
     tlsConfig.port = hostPort;
-    underlying_io = xio_create(tlsioConfig, &tlsConfig);
+    underlyingXio.reset(xio_create(tlsioConfig, &tlsConfig));
   }
 
-  auto saslMechanism = saslmechanism_create(saslanonymous_get_interface(), nullptr);
+  Azure::Core::Amqp::Network::_detail::UniqueSaslMechanismHandle saslMechanism{
+      saslmechanism_create(saslanonymous_get_interface(), nullptr)};
 
   SASLCLIENTIO_CONFIG saslConfig;
-  saslConfig.underlying_io = underlying_io;
-  saslConfig.sasl_mechanism = saslMechanism;
-  return _detail::TransportImpl::CreateFromXioHandle(
+  saslConfig.underlying_io = underlyingXio.get();
+  saslConfig.sasl_mechanism = saslMechanism.get();
+  auto transport = _detail::TransportImpl::CreateFromXioHandle(
       xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
+  transport->AdoptUnderlyingXio(std::move(underlyingXio));
+  transport->AdoptSaslMechanism(std::move(saslMechanism));
+  return transport;
 }

@@ -14,6 +14,11 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value) { xio_destroy(value); }
+  void UniqueHandleHelper<SASL_MECHANISM_INSTANCE_TAG>::FreeSaslMechanism(
+      SASL_MECHANISM_HANDLE value)
+  {
+    saslmechanism_destroy(value);
+  }
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace {
