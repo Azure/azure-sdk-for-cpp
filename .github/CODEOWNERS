@@ -6,17 +6,17 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman @xirzec
+/**                      @rickwinter @LarryOsterman @xirzec @j7nw4r
 
 #Catch all for files at the root
-/*                       @rickwinter @LarryOsterman @antkmsft @xirzec
+/*                       @rickwinter @LarryOsterman @antkmsft @j7nw4r @xirzec
 /sdk/                    @rickwinter @LarryOsterman @xirzec
 
 # Git Hub integration and bot rules
 /.github/                @rickwinter @xirzec
 
 # Samples
-/samples/                @rickwinter @antkmsft @LarryOsterman @xirzec
+/samples/                @rickwinter @antkmsft @j7nw4r @LarryOsterman @xirzec
 
 # AzureSdkOwners: @rickwinter @xirzec
 # ServiceLabel: %Azure.Core
@@ -87,7 +87,7 @@
 # Eng Sys
 ###########
 
-/eng/                    @danieljurek @antkmsft
+/eng/                    @danieljurek @antkmsft @j7nw4r
 /eng/common/             @Azure/azure-sdk-eng @Azure/azure-sdk-sync-approvers
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
