@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Allowed session authentication for blob downloads using structured-message CRC64 validation.
+
 ### Other Changes
 
 ## 12.20.0-beta.1 (2026-11-06)

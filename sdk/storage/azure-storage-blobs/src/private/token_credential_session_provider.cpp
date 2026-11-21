@@ -203,10 +203,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       return false;
     }
-    if (request.GetHeaders().count("x-ms-structured-body") != 0)
-    {
-      return false;
-    }
     const auto containerUrl = GetContainerUrl(request);
     return !containerUrl.empty()
         && request.GetUrl().GetPath().size() > Azure::Core::Url(containerUrl).GetPath().size();
