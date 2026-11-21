@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Allowed session authentication for blob downloads using structured-message CRC64 validation.
+- Allowed session authentication for blob downloads using structured-message format.
 
 ### Other Changes
 
