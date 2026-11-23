@@ -5,6 +5,7 @@
 
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 
 #include <atomic>
 #include <list>
@@ -157,8 +158,27 @@ namespace Azure { namespace Storage { namespace Test {
           return CreateResponse(Azure::Core::Http::HttpStatusCode::NotFound, "Not Found");
         }
 
-        auto response = CreateResponse(Azure::Core::Http::HttpStatusCode::Ok, "OK");
-        response->SetHeader("Content-Length", "0");
+        std::vector<uint8_t> body;
+        const auto structuredBody = request.GetHeader("x-ms-structured-body");
+        if (structuredBody.HasValue())
+        {
+          const std::vector<uint8_t> content{'s', 'e', 's', 's', 'i', 'o', 'n'};
+          Azure::Core::IO::MemoryBodyStream stream(content);
+          Azure::Storage::_internal::StructuredMessageEncodingStreamOptions encodingOptions;
+          encodingOptions.Flags = Azure::Storage::_internal::StructuredMessageFlags::Crc64;
+          Azure::Storage::_internal::StructuredMessageEncodingStream encoded(
+              &stream, encodingOptions);
+          body = encoded.ReadToEnd();
+        }
+        const auto bodyLength = body.size();
+        auto response
+            = CreateResponse(Azure::Core::Http::HttpStatusCode::Ok, "OK", std::move(body));
+        response->SetHeader("Content-Length", std::to_string(bodyLength));
+        if (structuredBody.HasValue())
+        {
+          response->SetHeader("x-ms-structured-body", structuredBody.Value());
+          response->SetHeader("x-ms-structured-content-length", "7");
+        }
         response->SetHeader("x-ms-creation-time", "Mon, 01 Jan 2024 00:00:00 GMT");
         response->SetHeader("x-ms-server-encrypted", "true");
         return response;
@@ -300,6 +320,65 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(state->MutatedDownloadObserved);
     ASSERT_EQ(state->SessionSignaturesValid.size(), 1U);
     EXPECT_TRUE(state->SessionSignaturesValid[0]);
+  }
+
+  TEST(SessionAuthenticationTest, SignsStructuredDownloads)
+  {
+    for (const bool ranged : {false, true})
+    {
+      SCOPED_TRACE(ranged);
+      auto credential = std::make_shared<SessionTestCredential>();
+      auto state = std::make_shared<SessionTestState>();
+      Blobs::BlobClientOptions options;
+      EnableSessions(options, state);
+      options.Session.AccountName = "account";
+
+      Blobs::BlobClient client(
+          "https://account.blob.core.windows.net/container/blob", credential, options);
+      Blobs::DownloadBlobOptions downloadOptions;
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+      downloadOptions.ValidationOptions = validationOptions;
+      if (ranged)
+      {
+        downloadOptions.Range = Azure::Core::Http::HttpRange{0, 7};
+      }
+      const std::vector<uint8_t> content{'s', 'e', 's', 's', 'i', 'o', 'n'};
+      auto response = client.Download(downloadOptions);
+      EXPECT_EQ(response.Value.BodyStream->ReadToEnd(), content);
+
+      ASSERT_EQ(state->AuthorizationHeaders.size(), 2U);
+      EXPECT_EQ(state->AuthorizationHeaders[1].find("Session token-container:"), 0U);
+      ASSERT_EQ(state->SessionSignaturesValid.size(), 1U);
+      EXPECT_TRUE(state->SessionSignaturesValid[0]);
+      EXPECT_EQ(credential->GetTokenCount, 1);
+    }
+  }
+
+  TEST(SessionAuthenticationTest, StructuredDownloadFallsBackToBearerAfter401)
+  {
+    auto credential = std::make_shared<SessionTestCredential>();
+    auto state = std::make_shared<SessionTestState>();
+    state->RejectFirstSessionRequest = true;
+    Blobs::BlobClientOptions options;
+    EnableSessions(options, state);
+    options.Session.AccountName = "account";
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    options.DownloadValidationOptions = validationOptions;
+
+    Blobs::BlobClient client(
+        "https://account.blob.core.windows.net/container/blob", credential, options);
+    const std::vector<uint8_t> content{'s', 'e', 's', 's', 'i', 'o', 'n'};
+    auto response = client.Download();
+    EXPECT_EQ(response.Value.BodyStream->ReadToEnd(), content);
+
+    ASSERT_EQ(state->AuthorizationHeaders.size(), 3U);
+    EXPECT_EQ(state->AuthorizationHeaders[1].find("Session token-container:"), 0U);
+    EXPECT_EQ(state->AuthorizationHeaders[2].find("Bearer "), 0U);
+    ASSERT_EQ(state->SessionSignaturesValid.size(), 1U);
+    EXPECT_TRUE(state->SessionSignaturesValid[0]);
+    EXPECT_EQ(credential->GetTokenCount, 2);
   }
 
   TEST(SessionAuthenticationTest, FallsBackToBearerAfter401)
@@ -598,8 +677,7 @@ namespace Azure { namespace Storage { namespace Test {
         Blobs::BlobClient("https://storage.contoso.com/container/blob", credential, options));
   }
 
-  class SessionAuthenticationRecordedTest : public BlobContainerClientTest {
-  };
+  class SessionAuthenticationRecordedTest : public BlobContainerClientTest {};
 
   TEST_F(SessionAuthenticationRecordedTest, DownloadsWithDefaultSessionProvider_PLAYBACKONLY_)
   {
