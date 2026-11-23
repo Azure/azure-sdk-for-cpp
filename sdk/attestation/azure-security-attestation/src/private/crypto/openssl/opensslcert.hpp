@@ -178,7 +178,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     std::string GetAlgorithm() const override
     {
-      X509_PUBKEY* pubkey = X509_get_X509_PUBKEY(m_certificate.get());
+      X509_PUBKEY* pubkey = const_cast<X509_PUBKEY*>(X509_get_X509_PUBKEY(m_certificate.get()));
       ASN1_OBJECT* asn1Algorithm;
       const unsigned char* publicKey;
       int publicKeyLen;
@@ -206,7 +206,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     std::string GetKeyType() const override
     {
-      X509_PUBKEY* pubkey = X509_get_X509_PUBKEY(m_certificate.get());
+      X509_PUBKEY* pubkey = const_cast<X509_PUBKEY*>(X509_get_X509_PUBKEY(m_certificate.get()));
       ASN1_OBJECT* asn1Algorithm;
       const unsigned char* publicKey;
       int publicKeyLen;
