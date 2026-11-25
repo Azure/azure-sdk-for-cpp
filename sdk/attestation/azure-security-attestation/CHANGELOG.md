@@ -14,6 +14,8 @@
 
 ### Bugs Fixed
 
+- Fix build with OpenSSL 4.0. (A community contribution, courtesy of _[toabctl](https://github.com/toabctl)_)
+
 ### Other Changes
 
 - Fix for GCC 15.2 undeclared `uint8_t` error in `opensslcrypto.cpp`. (A community contribution, courtesy of _[hoyhoy](https://github.com/hoyhoy)_)
