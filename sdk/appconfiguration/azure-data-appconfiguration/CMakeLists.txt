@@ -9,8 +9,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-data-appconfiguration LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(NOT AZ_ALL_LIBRARIES)
@@ -55,6 +53,7 @@ set(
 )
 
 add_library(azure-data-appconfiguration ${AZURE_DATA_APPCONFIGURATION_HEADER} ${AZURE_DATA_APPCONFIGURATION_SOURCE})
+target_compile_features(azure-data-appconfiguration PUBLIC cxx_std_14)
 
 target_compile_definitions(azure-data-appconfiguration PRIVATE _azure_BUILDING_SDK)
 
