@@ -12,6 +12,8 @@ trigger:
       - cmake-modules/AzureCodeCoverage.cmake
       - cmake-modules/tests/code-coverage
       - sdk/eventhubs
+      - sdk/core/azure-core-amqp
+      - eng/pipelines/templates/stages/platform-matrix-uamqp.json
 
 pr:
   branches:
@@ -25,12 +27,28 @@ pr:
       - cmake-modules/AzureCodeCoverage.cmake
       - cmake-modules/tests/code-coverage
       - sdk/eventhubs
+      - sdk/core/azure-core-amqp
+      - eng/pipelines/templates/stages/platform-matrix-uamqp.json
       - eng/common/testproxy
 
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: eventhubs
+      # The vcpkg port ships uAMQP, but the default build uses the Rust stack, so CI tests both.
+      BuildMatrices:
+        - JobName: Validate
+          DisplayName: '[Rust] Validate'
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Filter: 'CmakeArgs=^(?!.*-DDISABLE_AMQP=ON)'
+        - JobName: Validate_no_amqp
+          DisplayName: Validate
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Filter: 'CmakeArgs=-DDISABLE_AMQP=ON'
+        - JobName: Validate_uamqp
+          DisplayName: '[uAMQP] Validate'
+          Path: eng/pipelines/templates/stages/platform-matrix-uamqp.json
+          CoverageEnabled: false
       CtestRegex: "azure-messaging-eventhubs.*"
       LiveTestCtestRegex: "azure-messaging-eventhubs.*"
       LiveTestTimeoutInMinutes: 120

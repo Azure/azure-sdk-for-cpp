@@ -85,6 +85,11 @@ parameters:
   - name: UseFederatedAuth
     type: boolean
     default: true
+  - name: BuildMatrices
+    type: object
+    default:
+      - JobName: Validate
+        Path: eng/pipelines/templates/stages/platform-matrix.json
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -148,8 +153,9 @@ extends:
         jobs:
           - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
             parameters:
-              MatrixFile: eng/pipelines/templates/stages/platform-matrix-quick.json
-              JobName: QuickValidate
+              Matrices:
+                - JobName: QuickValidate
+                  Path: eng/pipelines/templates/stages/platform-matrix-quick.json
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PublishToVcpkgPartnerFeed: ${{ parameters.PublishToVcpkgPartnerFeed }}
               Artifacts: ${{ parameters.Artifacts }}
@@ -175,8 +181,7 @@ extends:
           - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml@self
             # Code coverage is enabled by default for live tests
             parameters:
-              MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
-              JobName: Validate
+              Matrices: ${{ parameters.BuildMatrices }}
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PublishToVcpkgPartnerFeed: ${{ parameters.PublishToVcpkgPartnerFeed }}
               Artifacts: ${{ parameters.Artifacts }}

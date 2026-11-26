@@ -44,42 +44,44 @@ parameters:
   - name: PostTestSteps
     type: stepList
     default: []
-  - name: MatrixFile
-    type: string
-    default: eng/pipelines/templates/stages/platform-matrix.json
-  - name: JobName
-    type: string
-    default: Validate 
+  - name: Matrices
+    type: object
   - name: RunMetaJobs
     type: boolean
     default: true
 
 jobs:
-  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
-    parameters:
-      GenerateJobName: ${{ parameters.JobName }}_generate_matrix
-      MatrixConfigs:
-        - Name: base
-          Path: ${{ parameters.MatrixFile }}
-          Selection: all
-          GenerateVMJobs: true
-      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      OsVmImage: $(LINUXVMIMAGE)
-      Pool: $(LINUXPOOL)
-      AdditionalParameters:
-        DisplayName: ${{ parameters.JobName }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        CtestRegex: ${{ parameters.CtestRegex }}
-        CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
-        CoverageReportPath: ${{ parameters.CoverageReportPath }}
-        CoverageEnabled: ${{ parameters.CoverageEnabled }}
-        LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
-        BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-        TestEnv: ${{ parameters.TestEnv }}
-        PreTestSteps: ${{ parameters.PreTestSteps }}
-        PostTestSteps: ${{ parameters.PostTestSteps }}
+  - ${{ each matrix in parameters.Matrices }}:
+    - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+      parameters:
+        GenerateJobName: ${{ matrix.JobName }}_generate_matrix
+        MatrixConfigs:
+          - Name: base
+            Path: ${{ matrix.Path }}
+            Selection: all
+            GenerateVMJobs: true
+        ${{ if matrix.Filter }}:
+          MatrixFilters:
+            - ${{ matrix.Filter }}
+        JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+        OsVmImage: $(LINUXVMIMAGE)
+        Pool: $(LINUXPOOL)
+        AdditionalParameters:
+          DisplayName: ${{ matrix.JobName }}
+          ${{ if matrix.DisplayName }}:
+            JobDisplayName: ${{ matrix.DisplayName }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          CtestRegex: ${{ parameters.CtestRegex }}
+          CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+          CoverageReportPath: ${{ parameters.CoverageReportPath }}
+          CoverageEnabled: ${{ coalesce(matrix.CoverageEnabled, parameters.CoverageEnabled) }}
+          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+          TestEnv: ${{ parameters.TestEnv }}
+          PreTestSteps: ${{ parameters.PreTestSteps }}
+          PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
