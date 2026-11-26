@@ -24,7 +24,7 @@
 /sdk/core/               @rickwinter @antkmsft @LarryOsterman @xirzec
 
 # PRLabel: %Azure.Core
-/sdk/core/azure-core-amqp/                                         @rickwinter @antkmsft @LarryOsterman @xirzec @j7nw4r @sagar0207 @SwayGom @sjkwak @hmlam
+/sdk/core/azure-core-amqp/                                         @rickwinter @antkmsft @LarryOsterman @xirzec @j7nw4r @ayush1252 @sagar0207 @SwayGom @sjkwak @hmlam
 
 # AzureSdkOwners: @antkmsft
 # ServiceLabel: %Azure.Identity
@@ -55,10 +55,10 @@
 # ServiceOwners:                                                   @danieljurek @antkmsft @LarryOsterman @RickWinter
 
 # PRLabel: %Event Hubs
-/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @meetamitbhatia @SwayGom @sagar0207
+/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @ayush1252 @meetamitbhatia @SwayGom @sagar0207
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners:                                                   @axisc @hmlam @sjkwak @j7nw4r @meetamitbhatia @SwayGom @sagar0207
+# ServiceOwners:                                                   @axisc @hmlam @sjkwak @j7nw4r @ayush1252 @meetamitbhatia @SwayGom @sagar0207
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                     @Azure/azure-sdk-write-keyvault
@@ -90,7 +90,7 @@
 /eng/                    @danieljurek @antkmsft
 /eng/common/             @Azure/azure-sdk-eng @Azure/azure-sdk-sync-approvers
 /.github/workflows/      @Azure/azure-sdk-eng
-/.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
+/.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec @j7nw4r
 
 /.config/1espt/          @Azure/azure-sdk-eng
 
